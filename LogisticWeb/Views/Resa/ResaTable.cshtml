@@ -1,0 +1,287 @@
+﻿@model List<ModelHelper.ViewModel.ResaProductionTable>
+<div class="row-fluid">
+    <div class="span12">
+        <div class="portlet box blue">
+            <div class="portlet-title">
+                <div class="caption" style="min-width: 104px;"><i class="icon-reorder"></i>SELECTION RESA</div>
+                <div class="tools">
+                    <a href="javascript:;" class="collapse"></a>
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <!-- BEGIN FORM-->
+                <div class="form-horizontal">
+                    <div class="row-fluid" style="margin-bottom: 5px;">
+                        @*<button type="button" onclick="ShowResaInsertResa()" class="btn blue">Add Selection In</button>*@
+                        <button type="button" onclick="ShowResaInsertResa()" class="btn blue">Add Selection Out</button>
+                        @*<button type="button" onclick="GetDataResaTable()" class="btn blue">Check Data</button>*@
+                        <div class="row-fluid">
+                            <div class="span12 right">
+                                <select data-placeholder="Filter By" id="filtertable" name="FILTERTABLE" class="span12" data-multiple="true" data-chosen="true" multiple>
+                                    <option selected value="PCS">Pcs</option>
+                                    <option selected value="KGS">Kgs</option>
+                                    <option selected value="SQFT">Sqft</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    @{
+                        int maxCol = 10;
+                        int perRow = 3;
+                        int maxPalletPerSelection = 0;
+                        int singlerow = 0;
+                        if (Model != null)
+                        {
+                            List<ModelHelper.ViewModel.ResaProductionTable> listProduction = (List<ModelHelper.ViewModel.ResaProductionTable>)Model;
+                            var detailPallet = listProduction.GroupBy(x => x.NAME).ToList();
+                            var SelectionList = listProduction.GroupBy(x => x.SELECTIONFULL).ToList();
+                            foreach (var item in SelectionList)
+                            {
+                                var count = item.ToList().GroupBy(x => x.NAME).Count();
+                                if (maxPalletPerSelection < count)
+                                {
+                                    maxPalletPerSelection = count;
+                                }
+                            }
+                            if (maxPalletPerSelection > maxCol)
+                            {
+                                singlerow = maxPalletPerSelection / maxCol;
+                                if (maxPalletPerSelection % maxCol != 0)
+                                {
+                                    singlerow = singlerow + 1;
+                                }
+                                perRow = singlerow * 3;
+                                maxPalletPerSelection = maxCol;
+                            }
+                            <div class="overflowtable">
+                                <table id="resatable" class="table table-striped table-bordered table-hover" datacolspan="@(maxPalletPerSelection)" datarowspan="@(singlerow.ToString())">
+                                    <thead>
+                                        <tr>
+                                            <th>Selection</th>
+                                            <th>Start / No.</th>
+                                            <th colspan="@(maxPalletPerSelection)">Detail</th>
+                                            <th>End / No.</th>
+                                            <th colspan="3">Selection Result</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            foreach (var selectT in listProduction.GroupBy(x => x.SELECTIONFULL))
+                                            {
+                                                var listProdPerSelect = selectT.GroupBy(x => x.NAME).ToList();
+
+                                                List<ModelHelper.ViewModel.ResaProductionTable>[] rowdetail = new List<ModelHelper.ViewModel.ResaProductionTable>[singlerow];
+                                                int row = 0;
+                                                int coutotal = listProdPerSelect.Count();
+                                                int k = 0;
+                                                while (coutotal > 0)
+                                                {
+                                                    int maxC = maxPalletPerSelection;
+                                                    if (maxC > coutotal)
+                                                    {
+                                                        maxC = coutotal;
+                                                    }
+                                                    int low = maxC;
+                                                    List<ModelHelper.ViewModel.ResaProductionTable> palletSelect = new List<ModelHelper.ViewModel.ResaProductionTable>();
+                                                    while (low > 0)
+                                                    {
+                                                        palletSelect.Add(listProdPerSelect[k].First());
+                                                        k++;
+                                                        low--;
+                                                    }
+                                                    rowdetail[row] = palletSelect;
+                                                    coutotal = coutotal - maxC;
+                                                    row++;
+                                                }
+                                                for (int bindrow = 0; bindrow < rowdetail.Length; bindrow++)
+                                                {
+                                                    var list = rowdetail[bindrow];
+                                                    if (list != null)
+                                                    {
+                                                        //foreach (var pa in list)
+                                                        //{
+                                                        if (bindrow == 0)
+                                                        {
+                                                            <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+
+                                                                <td rowspan="@(rowdetail.Where(x => x != null).Count() * 3)">
+
+                                                                    <input type="hidden" group="@list.First().MERGESELECTIONID" name="MERGESELECTIONID" value="@list.First().MERGESELECTIONID" />
+
+                                                                    <input type="hidden" group="@list.First().MERGESELECTIONID" name="SELECTIONID" value="@list.First().SELECTIONID" />
+
+                                                                    <input type="hidden" group="@list.First().MERGESELECTIONID" name="SUBSELECTIONID" value="@list.First().SUBSELECTIONID" />
+                                                                    @list.First().SELECTIONFULL
+                                                                </td>
+
+                                                                <td style="background-color: #e6eef1;font-weight: bold;">@list.First().SUMSTARTPCS</td>
+                                                                @foreach (var pallet in list)
+                                                                {
+                                                                    <td style="background-color: #e6eef1;font-weight: bold;">@pallet.PCS</td>
+                                                                }
+                                                                @if (maxPalletPerSelection > list.Count)
+                                                                {
+                                                                    for (var i = 0; i < (maxPalletPerSelection - list.Count); i++)
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">-</td>
+                                                                    }
+                                                                }
+                                                                <td style="background-color: #e6eef1;font-weight: bold;"><input class="span12 m-wrap" group="@list.First().MERGESELECTIONID" name="ENDPCS" type="number" value="@list.First().ENDPCS" /></td>
+                                                                <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                    
+                                                                    @(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().SUMSTARTPCS)
+                                                                </td>
+                                                                <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                                <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                            </tr>
+                                                            <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                                <td style="background-color:#bac2c5;">@list.First().SUMSTARTNW</td>
+                                                                @foreach (var pallet in list)
+                                                                {
+                                                                    <td style="background-color:#bac2c5;">@pallet.NW</td>
+                                                                }
+                                                                @if (maxPalletPerSelection > list.Count)
+                                                                {
+                                                                    for (var i = 0; i < (maxPalletPerSelection - list.Count); i++)
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;">-</td>
+                                                                    }
+                                                                }
+                                                                <td style="background-color:#bac2c5;"><input class="span12 m-wrap" name="ENDNW" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDNW" /></td>
+                                                                <td style="background-color:#bac2c5;"></td>
+                                                                <td style="background-color:#bac2c5;">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().SUMSTARTNW)</td>
+                                                                <td style="background-color:#bac2c5;"></td>
+                                                            </tr>
+                                                            <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                                <td style="background-color: #83a0a5;">@list.First().SUMSTARTSQFT</td>
+                                                                @foreach (var pallet in list)
+                                                                {
+                                                                    <td style="background-color: #83a0a5;">@pallet.SQFT</td>
+                                                                }
+                                                                @if (maxPalletPerSelection > list.Count)
+                                                                {
+                                                                    for (var i = 0; i < (maxPalletPerSelection - list.Count); i++)
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;">-</td>
+                                                                    }
+                                                                }
+                                                                <td style="background-color: #83a0a5;"><input class="span12 m-wrap" name="ENDSQFT" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDSQFT" /></td>
+                                                                <td style="background-color: #83a0a5;"></td>
+                                                                <td style="background-color: #83a0a5;"></td>
+                                                                <td style="background-color: #83a0a5;">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().SUMSTARTSQFT)</td>
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+
+                                                                <td style="background-color: #e6eef1;font-weight: bold;">@list.First().SUMSTARTPCS</td>
+                                                                @foreach (var pallet in list)
+                                                                {
+                                                                    <td style="background-color: #e6eef1;font-weight: bold;">@pallet.PCS</td>
+                                                                }
+                                                                @if (maxPalletPerSelection > list.Count)
+                                                                {
+                                                                    for (var i = 0; i < (maxPalletPerSelection - list.Count); i++)
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">-</td>
+                                                                    }
+                                                                }
+                                                                <td style="background-color: #e6eef1;"><input class="span12 m-wrap" name="ENDPCS" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDPCS" /></td>
+                                                                <td style="background-color: #e6eef1;">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().SUMSTARTPCS)</td>
+                                                                <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                                <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                            </tr>
+                                                            <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                                <td style="background-color:#bac2c5;">@list.First().SUMSTARTNW</td>
+                                                                @foreach (var pallet in list)
+                                                                {
+                                                                    <td style="background-color:#bac2c5;">@pallet.NW</td>
+                                                                }
+                                                                @if (maxPalletPerSelection > list.Count)
+                                                                {
+                                                                    for (var i = 0; i < (maxPalletPerSelection - list.Count); i++)
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;">-</td>
+                                                                    }
+                                                                }
+                                                                <td style="background-color:#bac2c5;"><input class="span12 m-wrap" name="ENDNW" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDNW" /></td>
+                                                                <td style="background-color:#bac2c5;"></td>
+                                                                <td style="background-color:#bac2c5;">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().SUMSTARTNW)</td>
+                                                                <td style="background-color:#bac2c5;"></td>
+                                                            </tr>
+                                                            <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                                <td style="background-color: #83a0a5;">@list.First().SUMSTARTSQFT</td>
+                                                                @foreach (var pallet in list)
+                                                                {
+                                                                    <td style="background-color: #83a0a5;">@pallet.SQFT</td>
+                                                                }
+                                                                @if (maxPalletPerSelection > list.Count)
+                                                                {
+                                                                    for (var i = 0; i < (maxPalletPerSelection - list.Count); i++)
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;">-</td>
+                                                                    }
+                                                                }
+                                                                <td style="background-color: #83a0a5;"><input class="span12 m-wrap" name="ENDSQFT" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDSQFT" /></td>
+                                                                <td style="background-color: #83a0a5;"></td>
+                                                                <td style="background-color: #83a0a5;"></td>
+                                                                <td style="background-color: #83a0a5;">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().SUMSTARTSQFT)</td>
+                                                            </tr>
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                    <tfoot style="display: none;">
+                                        @*<tr name="selectionin" style="display: none;">
+                                                <td>
+                                                    <select name="SELECTIONRESA" data-value="ID" data-name="SELECTIONFULL" ajaxurl="/selection/getselectioninvenresa" class="customselect span12"></select>
+                                                </td>
+                                                <td>
+                                                    <input disabled class="span12 m-wrap" name="STARTPCS" type="number" value="" />
+                                                    <input disabled class="span12 m-wrap" name="STARTNW" type="number" value="" />
+                                                    <input disabled class="span12 m-wrap" name="STARTSQFT" type="number" value="" />
+                                                </td>
+                                                <td colspan="@(maxPalletPerSelection)"></td>
+                                                <td>
+                                                    <input class="span12 m-wrap" name="ENDPCS" type="number" value="0" />
+                                                    <input class="span12 m-wrap" name="ENDNW" type="number" value="0" />
+                                                    <input class="span12 m-wrap" name="ENDSQFT" type="number" value="0" />
+                                                </td>
+                                                <td colspan="3">
+                                                    <button type="button" onclick="AddResaStartExtend()" class="btn blue">Add</button>
+                                                    <button type="button" onclick="OutAddResaStartExtend()" class="btn blue">Cancel</button>
+                                                </td>
+                                            </tr>*@
+                                        <tr name="selectionout">
+                                            <td>
+                                                <select name="SELECTIONFULL" data-value="ID" data-name="SELECTIONFULL" ajaxurl="/selection/getfullinone" class="customselect span12"></select>
+                                            </td>
+                                            <td></td>
+                                            <td colspan="@(maxPalletPerSelection)"></td>
+                                            <td>
+                                                <input class="span12 m-wrap" name="ENDPCS" type="number" value="0" />
+                                                <input class="span12 m-wrap" name="ENDNW" type="number" value="0" />
+                                                <input class="span12 m-wrap" name="ENDSQFT" type="number" value="0" />
+                                            </td>
+                                            <td colspan="3">
+                                                <button type="button" onclick="AddResaStartExtend()" class="btn blue">Add</button>
+                                                <button type="button" onclick="OutAddResaStartExtend()" class="btn blue">Cancel</button>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        }
+                    }
+
+
+                </div>
+                <!-- END FORM-->
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,76 @@
+﻿<table class="table table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Pallet Code</th>
+            <th>Material</th>
+            <th>Sub Material</th>
+            <th>PCS</th>
+            <th>NW</th>
+            <th>SQFT</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr name="avgrow">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <span name="avg">0.0</span>
+            </td>
+            <td>
+                <span name="savg">0.0</span>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr name="inputrow">
+            <td></td>
+            <td>
+                <input name="PKLNAME" type="text" class="span12" />
+            </td>
+            <td>
+                <select name="MATERIALID" class="span12"></select>
+            </td>
+            <td>
+                <select name="SUBMATERIALID" class="span12"></select>
+            </td>
+            <td>
+                <input name="PCS" type="number" class="span12" />
+            </td>
+            <td>
+                <input name="NW" type="number" class="span12" />
+            </td>
+            <td>
+                <input name="SQFT" type="number" class="span12" />
+            </td>
+            <td>
+                <button type="button" style="cursor: pointer;">
+                    <span onclick="AddRowPallet(this)" class="icon-plus"></span>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr name="totalrow">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <span name="totalavg">0.0</span>
+            </td>
+            <td>
+                <span name="totalsavg">0.0</span>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>

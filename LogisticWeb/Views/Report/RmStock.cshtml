@@ -1,0 +1,163 @@
+﻿@{
+    ViewBag.Title = "LamipelVN | RM STOCK";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+
+    @Html.Action("MenuSiteBar", "Common")
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <h3 class="page-title">
+                        RM STOCK
+                    </h3>
+                    <ul class="breadcrumb sitemap"></ul>
+                    @*<ul class="breadcrumb">
+                            <li>
+                                <i class="icon-home"></i>
+                                <a href="/">Home</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">Container</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                        </ul>*@
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box light-grey">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-globe"></i></div>
+                            @*<div class="tools">
+                                    <a href="javascript:;" class="collapse"></a>
+                                    <a href="#portlet-config" data-toggle="modal" class="config"></a>
+                                    <a href="javascript:;" class="reload"></a>
+                                </div>*@
+                        </div>
+                        <div class="portlet-body tablejs">
+                            <div class="table-toolbar">
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="customdatatable_filter dataTables_filter" realateid="tbList">
+                                        <label style="float:left;">
+                                            Search:<input id="freetext" name="freetext" data-compare="IMPFILE;PKLNAME" type="text" class="m-wrap medium" placeholder="freetext" />
+                                        </label>
+                                        <input placeholder="Date range" data-namedb="REALARRIVALDATE" id="daterange" name="daterange" type="text" class="m-wrap" style="width: 180px !important;" />
+                                        @*<select id="PALLETSTATUS" name="PALLETSTATUS" class="customselect" data-checkisnull="false">
+                                                <option selected value="">--Pallet status--</option>
+                                                <option value="IN PRODUCTION">In production</option>
+                                                <option value="STOCKED">Stocked</option>
+                                            </select>*@
+                                        <select id="MERGEMATERIALID" name="MERGEMATERIALID" data-value="ID" data-name="MATERIALFULL" ajaxurl="/material/getfullinone" class="customselect" loadallsuboption="true" data-checkisnull="false">
+                                            <option value="">--All Material--</option>
+                                        </select>
+                                        <select id="SUPPLIERID" name="SUPPLIERID" data-value="ID" data-name="SUPPLIERNAME" ajaxurl="/supplier/getlist" class="customselect" loadallsuboption="true" data-checkisnull="false">
+                                            <option value="">--All Supplier--</option>
+                                        </select>
+                                        <input type="button" class="btn btn-search btn-success" value="Search" style="width: 62px !important;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-fluid row-fluid-auto">
+                                <table formatcol=";;;;;;;;;" colwidth="50;70;40;150;30;;;;;30" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" pagesize="-1" control="report" urlquery="/report/getlistrmstockbylot" class="table table-striped table-bordered table-hover tablelot customdatatable" headerCol="CNT NO.,MATERIAL,INV,SUPPLIER,ORIGIN,PCS,NW,SQFT,AVG,SAVG,ACTUAL IHD" id='tbList' arrCol="PKLNAME,MATERIALFULL,INVOICE,SUPPLIERNAME,ORIGIN,SUMPCS,SUMNW,SUMSQFT,SUMAVG,SUMSAVG,REALARRIVALDATE" exportCol="PKLNAME,MATERIALFULL,INVOICE,SUPPLIERNAME,ORIGIN,SUMPCS,SUMNW,SUMSQFT,SUMAVG,SUMSAVG,REALARRIVALDATE" idCol="PKLNAME" subcontrol="importfile" subidCol="IDIMPFILE" headerminitablecol="PALLET NO.,IMP FILE,STATUS,MATERIAL,PCS,NW,SQFT,AVG,SAVG,PAID Y/N" minitablecol="NAME,IMPFILE,PALLETSTATUS,MATERIALFULL,PCS,NW,SQFT,AVG,SAVG,PAYMENTSTATUS" colindex="iconmore" noedit="true" data-singleclickaction="LoadDetailPallet" data-dbclickaction="GoToDetail"></table>
+
+
+                                @*<table formatcol=";;;;;;;;;;;;;" colwidth="30;120;20;60;50;;150;;;;;;;" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" control="report" urlquery="/report/getlistrmstock" class="table table-striped table-bordered table-hover customdatatable" headerCol="ACTUAL IHD,PALLET NO.,IMP FILE,CNT NO.,INV,SUPPLIER,MATERIAL,ORIGIN,PCS,NW,SQFT,AVG,SAVG,PAID Y/N" id='tbList' arrCol="REALARRIVALDATE,NAME,IMPFILE,PKLNAME,INVOICE,SUPPLIERNAME,MATERIALFULL,ORIGIN,PCS,NW,SQFT,AVG,SAVG,PAYMENTSTATUS" exportCol="REALARRIVALDATE,NAME,IMPFILE,PKLNAME,INVOICE,SUPPLIERNAME,MATERIALFULL,ORIGIN,PCS,NW,SQFT,AVG,SAVG,PAYMENTSTATUS" idCol="ID" noedit="true"></table>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" href="/Content/assets/plugins/data-tables/DT_bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" />
+    <link type="text/css" href="~/Content/assets/plugins/bootstrap-datepicker/css/datepicker.css" rel="stylesheet" />
+    <!-- END PAGE LEVEL STYLES -->
+    <style>
+        table {
+            font-size: 11px !important;
+        }
+
+            table thead {
+                font-size: 12px !important;
+            }
+
+        .table td {
+            padding: 2px 1px !important;
+        }
+
+        .table th {
+            font-size: 12px !important;
+            padding: 3px 1px !important;
+        }
+
+        .table td, .table td input, .table td select {
+            font-size: 11px !important;
+        }
+
+        .table.tablelot td {
+            padding: 6px 5px !important;
+        }
+
+        table.table.childtable thead {
+            background-color: #b0babb !important;
+        }
+
+        .table-hover.childtable tbody tr:hover > td, .table-hover.childtable tbody tr:hover > th {
+            background-color: #d2d9da !important;
+        }
+    </style>
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script type="text/javascript" src="/Content/assets/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/bootstrap-daterangepicker/date.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="~/Content/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/Content/assets/scripts/app.js"></script>
+    <script src="~/Scripts/Common/customtable.js"></script>
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <script src="~/Scripts/business/rmstock.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#daterange').daterangepicker(
+                {
+                    opens: (App.isRTL() ? 'left' : 'right'),
+                    format: 'yyyy-MM-dd',
+                    separator: ' - ',
+                    maxDate: Date.today(),
+                }
+            );
+        });
+    </script>
+}

@@ -1,0 +1,278 @@
+﻿@model ModelDatabase.MD_CONTAINER
+@{
+    ViewBag.Title = "LamipelVN | Edit Container";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+
+    @{
+        if (User != null && User.ISADMIN)
+        {
+            @Html.Action("MenuSiteBar", "Common")
+        }
+    }
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content @(User != null && !User.ISADMIN ? "no-margin" : "")">
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3 class="page-title">
+                        Edit Container
+                        <small>form components and widgets</small>
+                    </h3>
+                    <ul class="breadcrumb sitemap"></ul>
+                    @*<ul class="breadcrumb">
+                            <li>
+                                <i class="icon-home"></i>
+                                <a href="/">Home</a>
+                                <span class="icon-angle-right"></span>
+                            </li>
+                            <li>
+                                <a href="/container">Container</a>
+                                <span class="icon-angle-right"></span>
+                            </li>
+                            <li><a href="javascript:void(0)">Edit</a></li>
+                        </ul>*@
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet box blue">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-reorder"></i>Information</div>
+                        </div>
+                        <div class="portlet-body form">
+                            <div class="table-toolbar">
+                                <div class="btn-group pull-right">
+                                    @*<button onclick="CreateNew(this)" class="btn">
+                                            Create New Container
+                                        </button>*@
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <!-- BEGIN FORM-->
+                            <form id="frm" method="post" class="form-horizontal">
+                                <input type="hidden" id="NUMBERPALLET" name="NUMBERPALLET" value="@Model.NUMBERPALLET" />
+                                <input type="hidden" id="ID" name="ID" value="@Model.ID" />
+                                <div class="control-group">
+                                    <div class="controls-left-50">
+                                        <label class="control-label">CONTRACT NUMBER:</label>
+                                        <div class="controls">
+                                            <select selectedvalue="@Model.CONTRACTNUMBER" id="CONTRACTNUMBER" name="CONTRACTNUMBER" class="span6"></select>
+                                            @*<input id="CONTRACTNUMBER" name="CONTRACTNUMBER" type="text" class="span6 m-wrap" value="" />*@
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-50">
+                                        <label class="control-label turnleft">Customer:</label>
+                                        <div class="controls turnleft">
+                                            <input disabled id="CUSTOMERSHOW" name="CUSTOMERSHOW" type="text" class="span6 m-wrap" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="control-group">
+                                        <div class="controls-left-50">
+                                            <label class="control-label">CONTRACT NUMBER:</label>
+                                            <div class="controls">
+                                                <input id="CONTRACTNUMBER" name="CONTRACTNUMBER" type="text" class="span6 m-wrap" value="@Model.CONTRACTNUMBER" />
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                <div class="control-group">
+                                    <div class="controls-left-50">
+                                        <label class="control-label">Max Weight:</label>
+                                        <div class="controls">
+                                            <input id="MAXWEIGHT" name="MAXWEIGHT" type="text" class="span6 m-wrap tooltips" value="@Model.MAXWEIGHT" data-trigger="hover" data-original-title="Input hide" />
+                                            <span class="unit-left"><small>KGS</small></span>
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-50">
+                                        <label class="control-label turnleft">Create Date:</label>
+                                        <div class="controls turnleft">
+                                            <input readonly id="CREATEDDATE" name="CREATEDDATE" type="text" class="span6 m-wrap" value="@Model.CREATEDDATE.ToString("yyyy-MM-dd")" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls-left-50">
+                                        <label class="control-label">Selection:</label>
+                                        <div class="controls">
+                                            <select id="SELECTION" name="SELECTION" data-value="NAME" data-name="NAME" ajaxurl="/selection/getlist" afterload="AutoCheckAndLoadSub" onchange="LoadSubSel()" class="customselect span6"></select>
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-50" style="display:none;">
+                                        <label class="control-label turnleft">Sub Selection:</label>
+                                        <div class="controls turnleft">
+                                            <select id="SUBSELECTION" name="SUBSELECTION" class="span6" onchange="LoadPalletUnsign()"></select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <div class="controls-left-50">
+                                        <label class="control-label">Total NW:</label>
+                                        <div class="controls">
+                                            <input id="TOTAL" name="TOTAL" type="number" class="span6 m-wrap tooltips" value="0" data-trigger="hover" data-original-title="Input hide" />
+                                            <span class="unit-left"><small>KGS</small></span>
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-50">
+                                        <label class="control-label turnleft">PROD.PKL No:</label>
+                                        <div class="controls turnleft">
+                                            <input readonly id="NAME" name="NAME" type="text" class="span6 m-wrap tooltips" value="@Model.NAME" data-trigger="hover" data-original-title="Input hide" />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="control-group">
+                                    <div class="controls-left-50">
+                                        <label class="control-label">Note:</label>
+                                        <div class="controls">
+                                            <input id="NOTE" name="NOTE" class="span6 m-wrap" value="@Model.NOTE" />
+                                        </div>
+                                    </div>
+                                    @{
+                                        if (User.ISADMIN)
+                                        {
+                                            <div class="controls-left-50">
+                                                <label class="control-label turnleft">Dispatch Date:</label>
+                                                <div class="controls turnleft">
+                                                    <input readonly id="SHIPPINGDATE" name="SHIPPINGDATE" type="text" class="span6 m-wrap" value="@(Model.SHIPPINGDATE.HasValue ? Model.SHIPPINGDATE.Value.ToString("yyyy-MM-dd") : "")" />
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+
+                                <div class="control-group">
+                                    <table id="table" class="table table-striped table-bordered table-hover" style="width: 60%; position: relative;float:left;margin: 5px 0 0 5px;z-index:1;">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th style="min-width: 80px;">Selection</th>
+                                                <th>Pallet No.</th>
+                                                <th>Layer</th>
+                                                <th>Net Weight</th>
+                                                <th>Gross Weight</th>
+                                                <th>Square Foot</th>
+                                                <th>Resa</th>
+                                                <th>SNo Resa</th>
+                                                <th style="min-width:10px;"></th>
+                                                <th style="min-width:10px;"></th>
+                                                <th style="min-width:10px;"><input type="checkbox" onchange="DetectCheckAll(this)" /></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                    <ul id="container" class="connectedSortable palletSign"></ul>
+                                    <div style="float:left;width: 50px;">
+                                        <img onclick="MoveAllIn()" src="~/Content/assets/img/doublearrow.png" style="height: 40px;float: left;margin-top: 20px; margin-left: 50px; cursor: pointer;" />
+                                        <img onclick="PrintMultiple()" src="~/Content/assets/img/printer-circle-blue-512.png" style="height: 40px;float: left;margin-top: 20px; margin-left: 50px; cursor: pointer;" />
+                                    </div>
+                                    <ul id="palletunsign" class="connectedSortable palletUnsign"></ul>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="form-actions">
+                                    <input type="hidden" id="issave" name="issave" value="0" />
+                                    <button id="update1" type="button" onclick="UpdatePackageList()" class="btn blue">Save</button>
+                                    <button id="update2" type="button" onclick="UpdatePackageList(true)" class="btn blue">Close PKL</button>
+                                    <button type="button" class="btn" onclick="location.href = '/container'">Cancel</button>
+                                </div>
+                            </form>
+                            <!-- END FORM-->
+                        </div>
+                    </div>
+                    <!-- END SAMPLE FORM PORTLET-->
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE -->
+    </div>
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-fileupload/bootstrap-fileupload.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/gritter/css/jquery.gritter.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/chosen-bootstrap/chosen/chosen.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/clockface/css/clockface.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-datepicker/css/datepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-timepicker/compiled/timepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-colorpicker/css/colorpicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-datetimepicker/css/datetimepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/jquery-multi-select/css/multi-select-metro.css" />
+    <link href="/Content/assets/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/assets/plugins/bootstrap-switch/static/stylesheets/bootstrap-switch-metro.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/jquery-tags-input/jquery.tagsinput.css" />
+    @*<link href="~/Content/stylesheet.css" rel="stylesheet" />*@
+    <!-- END PAGE LEVEL STYLES -->
+    <link href="~/Content/jqueryUi.css" rel="stylesheet" />
+
+    <style>
+        .connectedSortable {
+            border: 1px solid #eee;
+            width: 142px;
+            min-height: 20px;
+            list-style-type: none;
+            margin: 0;
+            padding: 5px 0 0 0;
+            float: left;
+            margin-right: 10px;
+        }
+
+            .connectedSortable li {
+                font-size: 1.2em;
+                width: 120px;
+                border-radius: 5px !important;
+                padding: 5px 10px;
+                margin: 10px;
+                cursor: pointer;
+            }
+
+        #container.connectedSortable li {
+            min-width: 120px;
+            width: auto;
+        }
+
+        #container {
+            width: 650px !important;
+        }
+
+        #palletunsign {
+            float: right;
+            width: 170px !important;
+        }
+    </style>
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="~/Scripts/jqueryUI.js"></script>
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <script src="~/Scripts/business/container.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input[name=SHIPPINGDATE]').datepicker({
+                "autoclose": true,
+                format: 'yyyy-MM-dd',
+            });
+            getListContainer();
+        });
+    </script>
+}

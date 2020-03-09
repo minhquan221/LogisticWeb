@@ -1,0 +1,22 @@
+﻿@*@model IEnumerable<QMT.Models.Menu>
+
+@{
+    if (Model.Count() > 0)
+    {
+        var childList = Model.Where(x => x.ParentId == ViewData["ParrentMenuId"].ToString() && x.IsActive && !x.IsDeleted).ToList();
+        if (childList != null)
+        {
+            <ul class="sub-menu">
+                @foreach (var item in childList.ToList())
+                {
+                    <li>
+                        <a href="@(string.IsNullOrEmpty(item.Link) ? "javascript:void(0);" : item.Link)">
+                            @item.MenuName
+                        </a>
+                        @Html.Action("ChildMenu", "Common", new { lstMenu = Model, parrentId = item.Id.ToString() })
+                    </li>
+                }
+            </ul>
+        }
+    }
+}*@

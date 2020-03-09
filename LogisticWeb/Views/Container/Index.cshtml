@@ -1,0 +1,156 @@
+﻿@{
+    ViewBag.Title = "LamipelVN | List Container";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+    @{
+        if (User != null && User.ISADMIN)
+        {
+            @Html.Action("MenuSiteBar", "Common")
+        }
+    }
+    
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content @(User != null && !User.ISADMIN ? "no-margin" : "")">
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box light-grey">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-globe"></i>List Container</div>
+                            @*<div class="tools">
+                                    <a href="javascript:;" class="collapse"></a>
+                                    <a href="#portlet-config" data-toggle="modal" class="config"></a>
+                                    <a href="javascript:;" class="reload"></a>
+                                </div>*@
+                        </div>
+                        <div class="portlet-body tablejs">
+                            <div class="table-toolbar">
+                                <div class="btn-group">
+                                    <button id="sample_editable_1_new" url="/container/creatnew" onclick="GotoUrl(this)" class="btn green">
+                                        Create new Prod.PKL<br />Tạo mới Prod.PKL <i class="icon-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="btn-group pull-right">
+                                    <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                        Tools <i class="icon-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a onclick="ExportSearch()" href="javascript:void(0)">Export Excel</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="customdatatable_filter dataTables_filter" realateid="tbList">
+                                        <label style="float:left;">
+                                            Search:<input id="NAME" name="NAME" type="text" class="m-wrap medium" placeholder="Prod.PKL No" />
+                                        </label>
+                                        <input placeholder="Date range" data-namedb="CREATEDDATE" id="daterange" name="daterange" type="text" class="m-wrap" style="width: 180px !important;" />
+                                        <select id="SELECTION" name="SELECTION" data-value="NAME" data-name="NAME" ajaxurl="/selection/getlist" class="customselect" afterload="LoadSubSelIndex" onchange="LoadSubSelIndex()" loadallsuboption="true" data-nocheck="true">
+                                            <option value="">--All Selection--</option>
+                                        </select>
+                                        <select data-mix-select="true" id="SUBSELECTION" name="SUBSELECTION" class="span6" data-nocheck="true"></select>
+                                        <select id="STATUS" name="STATUS" class="span6" data-fullquery="true">
+                                            <option value="">--All status--</option>
+                                            <option value=" SHIPPINGDATE is not null AND ISDONE = 1 ">Dispatched</option>
+                                            <option value=" SHIPPINGDATE is null AND ISDONE = 1 ">Ready to ship</option>
+                                            <option selected value=" ISDONE = 0 ">On the line</option>
+                                        </select>
+                                        <input type="button" class="btn btn-search btn-success" value="Search" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-fluid row-fluid-auto">
+                                @{
+                                    if (User.ISADMIN)
+                                    {
+                                        <table formatcol=";;1;;1;1;1;1;;;;;;" colwidth="110;50;;120;40;40;40;;80;70;50;200;70;110" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" control="container" urlquery="/container/getlistindex" class='table table-striped table-bordered table-hover customdatatable' headerCol="Create Date,PKL,PKGs,Selection,Layer (PCS),NW (KGS),GW (KGS),SQFT,Status,Closed Date,Contract,Consignee,Dispatched Date,Remark" id='tbList' arrCol="CREATEDDATE,NAME,NUMBERPALLET,SELECTION,TOTALLAYER,TOTALNW,TOTALGW,TOTALSQFT,STATUS,CLOSEDATE,CONTRACTCODE,CONSIGNEENAME,SHIPPINGDATE,NOTE" exportCol="CREATEDDATE,NAME,NUMBERPALLET,SELECTION,TOTALLAYER,TOTALNW,TOTALGW,TOTALSQFT,STATUS,CLOSEDATE,SHIPPINGDATE,NOTE" idCol="NAME" @(User != null && User.ISADMIN ? "data-admin=true" : "") replaceEdit="true"></table>
+
+                                        @*<table formatcol=";;1;;1;1;1;1;;;;;;" colwidth="110;50;;120;40;40;40;;80;70;50;200;70;" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" control="container" urlquery="/container/getlistindex" class='table table-striped table-bordered table-hover customdatatable' headerCol="Create Date,PKL,PKGs,Selection,Layer (PCS),NW (KGS),GW (KGS),SQFT,Status,Closed Date,Contract,Consignee,Dispatched Date,Remark" id='tbList' arrCol="CREATEDDATE,NAME,NUMBERPALLET,SELECTION,TOTALLAYER,TOTALNW,TOTALGW,TOTALSQFT,STATUS,CLOSEDATE,CONTRACTCODE,CONSIGNEENAME,SHIPPINGDATE,NOTE" exportCol="CREATEDDATE,NAME,NUMBERPALLET,SELECTION,TOTALLAYER,TOTALNW,TOTALGW,TOTALSQFT,STATUS,CLOSEDATE,SHIPPINGDATE,NOTE" idCol="NAME" @(User != null && User.ISADMIN ? "data-admin=true" : "") data-dbclickaction="DispatcheData"></table>*@
+                                    }
+                                    else
+                                    {
+                                        @*<table formatcol=";;1;;1;1;1;1;;;;;;" colwidth="110;50;;120;40;40;40;;80;70;;200;70;" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" control="container" urlquery="/container/getlistindex" class='table table-striped table-bordered table-hover customdatatable' headerCol="Create Date,PKL,PKGs,Selection,Layer (PCS),NW (KGS),GW (KGS),SQFT,Status,Closed Date" id='tbList' arrCol="CREATEDDATE,NAME,NUMBERPALLET,SELECTION,TOTALLAYER,TOTALNW,TOTALGW,TOTALSQFT,STATUS,CLOSEDATE" exportCol="CREATEDDATE,NAME,NUMBERPALLET,SELECTION,TOTALLAYER,TOTALNW,TOTALGW,TOTALSQFT,STATUS,CLOSEDATE,SHIPPINGDATE,NOTE" idCol="NAME" @(User != null && User.ISADMIN ? "data-admin=true" : "") replaceEdit="true" data-dbclickaction="DispatcheData"></table>*@
+
+                                        <table formatcol=";;1;;1;1;1;1;;;;;;;" colwidth="80;40;;100;40;40;40;;80;70;;200;70;;" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" control="container" urlquery="/container/getlistindex" class='table table-striped table-bordered table-hover customdatatable' headerCol="Create Date,PKL,PKGs,Selection,Layer (PCS),NW (KGS),GW (KGS),SQFT,Status,Closed Date,Remark" id='tbList' arrCol="CREATEDDATE,NAME,NUMBERPALLET,SELECTION,TOTALLAYER,TOTALNW,TOTALGW,TOTALSQFT,STATUS,CLOSEDATE,NOTE" exportCol="CREATEDDATE,NAME,NUMBERPALLET,SELECTION,TOTALLAYER,TOTALNW,TOTALGW,TOTALSQFT,STATUS,CLOSEDATE,SHIPPINGDATE,NOTE" idCol="NAME" @(User != null && User.ISADMIN ? "data-admin=true" : "") replaceEdit="true"></table>
+                                    }
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" href="/Content/assets/plugins/data-tables/DT_bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" />
+    <link type="text/css" href="~/Content/assets/plugins/bootstrap-datepicker/css/datepicker.css" rel="stylesheet" />
+    <!-- END PAGE LEVEL STYLES -->
+    <style>
+        table {
+            font-size: 11px !important;
+        }
+
+            table thead {
+                font-size: 12px !important;
+            }
+        .table td, .table td input, .table td select {
+            font-size: 11px !important;
+        }
+        .table th, .table td {
+            padding: 8px 8px !important;
+        }
+    </style>
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script type="text/javascript" src="/Content/assets/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/bootstrap-daterangepicker/date.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="~/Content/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/Content/assets/scripts/app.js"></script>
+    <script src="~/Scripts/Common/customtable.js"></script>
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <script src="~/Scripts/business/container.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#daterange').daterangepicker(
+                {
+                    opens: (App.isRTL() ? 'left' : 'right'),
+                    format: 'yyyy-MM-dd',
+                    separator: ' - ',
+                    maxDate: Date.today(),
+                }
+            );
+        });
+    </script>
+}

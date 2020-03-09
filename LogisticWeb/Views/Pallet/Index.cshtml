@@ -1,0 +1,213 @@
+﻿@{
+    ViewBag.Title = "LamipelVN | List Pallet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+
+    @{
+        if (User != null && User.ISADMIN)
+        {
+            @Html.Action("MenuSiteBar", "Common")
+        }
+    }
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content @(User != null && !User.ISADMIN ? "no-margin" : "")">
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <h3 class="page-title">
+
+                        <small></small>
+                    </h3>
+                    <ul class="breadcrumb sitemap"></ul>
+                    @*<ul class="breadcrumb">
+                            <li>
+                                <i class="icon-home"></i>
+                                <a href="/">Home</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">Pallet</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                        </ul>*@
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box light-grey">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-globe"></i>OUTPUT PALLET LIST</div>
+                            @*<div class="tools">
+                                    <a href="javascript:;" class="collapse"></a>
+                                    <a href="#portlet-config" data-toggle="modal" class="config"></a>
+                                    <a href="javascript:;" class="reload"></a>
+                                </div>*@
+                        </div>
+                        <div class="portlet-body tablejs">
+                            <div class="table-toolbar">
+                                <div class="btn-group">
+                                    <button id="sample_editable_1_new" url="/ShippingMarkPrint" onclick="GotoUrl(this)" class="btn green">
+                                        Print New Pallet <i class="icon-plus"></i>
+                                    </button>
+                                </div>
+
+                                <div class="btn-group pull-right">
+                                    <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                        Tools <i class="icon-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a onclick="ExportSearch()" href="javascript:void(0)">Export Excel</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="btn-group pull-right">
+                                    <button class="btn" onclick="PrintAll(this)">
+                                        <i class="icon-print"></i>Print
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="customdatatable_filter dataTables_filter" realateid="tbList">
+                                        <label style="float:left;">
+                                            Search:<input id="freetext" name="freetext" data-compare="NAME;CONTAINERID" type="text" class="m-wrap medium" placeholder="freetext" />
+                                        </label>
+                                        <label style="float:left;">
+                                            <input id="freetext2" name="freetext2" data-compare="RESACODE" type="text" class="m-wrap medium" placeholder="Resa code" />
+                                        </label>
+                                        <select id="SELECTION" name="SELECTION" data-value="NAME" data-name="NAME" ajaxurl="/selection/getlist" class="customselect" afterload="LoadSubSel" onchange="LoadSubSel()" data-checkisnull="false">
+                                            <option value="">--All Selection--</option>
+                                        </select>
+                                        <select id="SUBSELECTION" name="SUBSELECTION" class="span6"></select>
+                                        <select id="STATUS" name="STATUS" class="span6" data-fullquery="true">
+                                            <option value="">--All status--</option>
+                                            <option value=" STATUS = 1 ">Dispatched</option>
+                                            <option value=" STATUS = 2 ">In Production</option>
+                                            <option selected value=" STATUS = 0 ">Stocked</option>
+                                        </select>
+                                        <input type="button" class="btn btn-search btn-success" value="Search" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-fluid row-fluid-auto">
+                                <table ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" colwidth="100;140;130;;62;;;73;" control="pallet" urlquery="/pallet/getlist" class='table table-striped table-bordered table-hover customdatatable' headerCol="Pallet No,Selection,Create Date,Prod.PKL,Status,Create By,Update date,Resa,Resa SNo" id='tbList' arrCol="NAME,FULLSELECTION,CREATEDDATE,CONTAINERID,STATUSPALLET,NAVIGATORNAME,UPDATEDDATE,RESACODE,INDEXRESA" exportCol="NAME,FULLSELECTION,CREATEDDATE,CONTAINERID,STATUSPALLET,NAVIGATORNAME,UPDATEDDATE,RESACODE,INDEXRESA,HIDE,NETWEIGHT,GROSSWEIGHT" @(User != null && User.ISADMIN ? "data-admin=true" : "") replaceEdit="true" checkall="true"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" href="/Content/assets/plugins/data-tables/DT_bootstrap.css" />
+    <!-- END PAGE LEVEL STYLES -->
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script type="text/javascript" src="/Content/assets/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/Content/assets/scripts/app.js"></script>
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <script src="~/Scripts/Common/customtable.js"></script>
+    <script src="~/Scripts/business/pallet.js"></script>
+    <script>
+        //function Delete(item) {
+        //    var $item = $(item);
+        //    var idData = $item.attr('data-id');
+        //    Swal.fire({
+        //        title: 'Are you sure?',
+        //        text: "You won't be able to revert this!",
+        //        type: 'warning',
+        //        showCancelButton: true,
+        //        confirmButtonColor: '#3085d6',
+        //        cancelButtonColor: '#d33',
+        //        confirmButtonText: 'Yes, delete it!'
+        //    }).then((result) => {
+        //        if (result.value) {
+        //            $.ajax({
+        //                method: 'POST',
+        //                url: '/pallet/delete',
+        //                data: { id: idData },
+        //                success: function (res) {
+        //                    if (res.IsOk) {
+        //                        Swal.fire(
+        //                            'Deleted!',
+        //                            'Your record has been deleted.',
+        //                            'success'
+        //                        );
+        //                        $item.closest('tr').remove();
+        //                    }
+        //                    else {
+        //                        Swal.fire({
+        //                            type: 'error',
+        //                            title: 'Error',
+        //                            text: res.Msg
+        //                        });
+        //                    }
+        //                }
+        //            });
+
+        //        }
+        //    })
+        //    var $item = $(item);
+
+        //}
+        
+        function LoadSubSel() {
+            var value = $('#SELECTION').val();
+            $.ajax({
+                method: 'POST',
+                url: '/subsel/getlistbyId',
+                data: { value: value },
+                success: function (res) {
+                    if (res.IsOk) {
+                        $('#SUBSELECTION').html('');
+                        if (res.dataObj != undefined) {
+                            var $optionsList = [];
+                            for (var i = 0; i < res.dataObj.length; i++) {
+                                var item = res.dataObj[i];
+                                var $option = $('<option value="' + item.NAME + '">' + item.NAME + '</option>');
+                                $optionsList.push($option);
+                            }
+                            for (var i = 0; i < $optionsList.length; i++) {
+                                $('#SUBSELECTION').append($optionsList[i]);
+
+                            }
+                            if ($optionsList.length > 0) {
+                                //$('#SUBSELECTION').closest('.controls-left-50').show();
+                            }
+                        }
+                    }
+                    else {
+                        $('#SUBSELECTION').html('');
+                        //$('#SUBSELECTION').closest('.controls-left-50').hide();
+                    }
+                    //CountHide();
+                }
+            });
+        }
+    </script>
+}

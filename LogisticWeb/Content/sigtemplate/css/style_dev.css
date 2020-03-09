@@ -1,0 +1,8 @@
+.img_checked {
+    vertical-align: -webkit-baseline-middle;
+    background-image: url(../images/f-check_256-24.png);
+}
+.img_uncheck {
+    vertical-align: -webkit-baseline-middle;
+    background-image: url(../images/f-cross_256-20.png);
+}

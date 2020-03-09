@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "LamipelVN | Convert to QR";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+
+    @Html.Action("MenuSiteBar", "Common")
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3 class="page-title">
+                        Print Shipping Mark
+                        <small>form components and widgets</small>
+                    </h3>
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="icon-home"></i>
+                            <a href="index.html">Home</a>
+                            <span class="icon-angle-right"></span>
+                        </li>
+                        <li>
+                            <a href="#">Selection</a>
+                            <span class="icon-angle-right"></span>
+                        </li>
+                        <li><a href="#">Detail</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet box blue">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-reorder"></i>Information</div>
+                            @*<div class="tools">
+                                    <a href="javascript:;" class="collapse"></a>
+                                    <a href="#portlet-config" data-toggle="modal" class="config"></a>
+                                    <a href="javascript:;" class="reload"></a>
+                                    <a href="javascript:;" class="remove"></a>
+                                </div>*@
+                        </div>
+                        <div class="portlet-body form">
+                            @*<div class="table-toolbar">
+                                    <div class="btn-group pull-right">
+                                        <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                            Tools <i class="icon-angle-down"></i>
+                                        </button>
+                                        <ul class="dropdown-menu pull-right">
+                                            <li><a onclick="SavePallet($('.form-actions').first(), 0)" href="javascript:void(0)">Print</a></li>
+                                        </ul>
+                                    </div>
+                                </div>*@
+                            <!-- BEGIN FORM-->
+
+                            <form id="frm" action="/ShippingmarkPrint/SavePallet" control="/pallet" method="post" class="form-horizontal">
+                                <div class="control-group">
+                                    <div class="controls-left-50">
+                                        <label class="control-label">Text Input:</label>
+                                        <div class="controls">
+                                            <textarea id="input" name="input"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-50">
+                                        <label class="control-label">QR Image:</label>
+                                        <div class="controls">
+                                            <img id="QRimg" src="" />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-actions">
+                                    <button type="button" onclick="LoadQR()" class="btn">Load QR</button>
+                                </div>
+                            </form>
+                            <!-- END FORM-->
+                        </div>
+                    </div>
+                    <!-- END SAMPLE FORM PORTLET-->
+                </div>
+            </div>
+
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE -->
+    </div>
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-fileupload/bootstrap-fileupload.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/gritter/css/jquery.gritter.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/chosen-bootstrap/chosen/chosen.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/clockface/css/clockface.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-datepicker/css/datepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-timepicker/compiled/timepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-colorpicker/css/colorpicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-datetimepicker/css/datetimepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/jquery-multi-select/css/multi-select-metro.css" />
+    <link href="/Content/assets/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/assets/plugins/bootstrap-switch/static/stylesheets/bootstrap-switch-metro.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/jquery-tags-input/jquery.tagsinput.css" />
+    @*<link href="~/Content/stylesheet.css" rel="stylesheet" />*@
+    <!-- END PAGE LEVEL STYLES -->
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script type="text/javascript">
+        function LoadQR() {
+            var url = '/addin/QRCode';
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: { stringinput: $('#input').val() },
+                success: function (res) {
+                    $('#QRimg').attr('src', res.data);
+                }
+            });
+        }
+    </script>
+}
+
+

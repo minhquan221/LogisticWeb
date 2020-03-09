@@ -1,0 +1,748 @@
+﻿@using LogisticWeb.Common
+@model ModelHelper.ViewModel.ResaView
+@{
+    ViewBag.Title = "LamipelVN | Resa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+@{
+    var lstResaStart = ViewBag.ResaStartList != null ? (List<ModelDatabase.SYS_UNCOMPLETEPALLET>)ViewBag.ResaStartList : new List<ModelDatabase.SYS_UNCOMPLETEPALLET>();
+}
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+
+    @{
+        if (User != null && User.ISADMIN)
+        {
+            @Html.Action("MenuSiteBar", "Common")
+        }
+    }
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content @(User != null && !User.ISADMIN ? "no-margin" : "")">
+        <div id="contentbody" class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3 class="page-title">
+
+                        <small></small>
+                    </h3>
+                    <ul class="breadcrumb sitemap"></ul>
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box blue">
+                        <div class="portlet-title" id="ovvresa">
+                            @*<div class="caption"><i class="icon-reorder"></i>RESA OVERVIEW</div>*@
+                            <div class="tools">
+                                <a href="javascript:;" class="collapse"></a>
+                            </div>
+                        </div>
+                        <div id="detail" class="portlet-body form">
+                            <input hidden name="ID" value="@Model.ID" />
+                            <!-- BEGIN FORM-->
+                            <div class="form-horizontal">
+                                <div class="control-group">
+                                    <div class="control-group span7">
+                                        <div class="controls-left-50 nosize">
+                                            <label class="control-label">RESA NO.</label>
+                                            <div class="controls">
+                                                <input id="RESACODE" name="RESACODE" autocomplete="off" type="text" class="span6 m-wrap" value="@Model.RESACODE" />
+                                            </div>
+                                        </div>
+                                        <div class="controls-left-50 nosize">
+                                            <label class="control-label">TYPE OF RESA</label>
+                                            <div class="controls">
+                                                <select name="TYPE" class="span6" onchange="CheckType(this)">
+                                                    @{
+                                                        if (Model.TYPE == 1)
+                                                        {
+                                                            <option value="1">SELECT</option>
+                                                        }
+                                                        else if (Model.TYPE == 2)
+                                                        {
+                                                            <option value="2">TRIM</option>
+                                                        }
+                                                        else if (Model.TYPE == 3)
+                                                        {
+                                                            <option value="3">SHOULDER</option>
+                                                        }
+                                                    }
+                                                    @*<option value="0">--- Select Type Resa ---</option>
+                                                        <option value="1">Production Step 1</option>
+                                                        <option value="2">Production Tream</option>*@
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="control-group span5" id="arealotselect">
+                                        @{
+                                            var lstPalletIn = (List<ModelHelper.ViewModel.ImpPalletReport>)ViewBag.ListMaterialImported;
+
+                                            if (Model.TYPE == 1 && lstPalletIn.Count > 0)
+                                            {
+                                                <table class="table table-striped table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                RM LOT
+                                                            </th>
+                                                            <th>
+                                                                CONT.
+                                                            </th>
+                                                            <th>
+                                                                INV.
+                                                            </th>
+                                                            <th>
+                                                                SUPP.
+                                                            </th>
+                                                            <th>
+                                                                IMPF
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var item in lstPalletIn.GroupBy(x => x.IMPORTPKL))
+                                                        {
+                                                        <tr>
+                                                            <td style="text-align:center;">@item.First().PALLETDONECODE.Split('-')[0]</td>
+                                                            <td style="text-align:center;">@item.First().PKLIDENTITY</td>
+                                                            <td style="text-align:center;">@item.First().INVOICE</td>
+                                                            <td style="text-align:center;">@item.First().SUPPLIERNAME</td>
+                                                            <td style="text-align:center;">@item.First().IMPFILEID</td>
+                                                        </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="control-group span7">
+                                        <div class="controls-left-50 nosize">
+                                            <label class="control-label">PIC.</label>
+                                            <div class="controls">
+                                                <input name="NAVIGATOR" type="text" class="span6 m-wrap" value="@Model.NAVIGATOR" />
+                                            </div>
+                                        </div>
+                                        @{
+                                            switch (Model.TYPE)
+                                            {
+                                                case 1:
+                                                    <div id="selectrequired" class="controls-left-50 nosize">
+                                                        <label class="control-label">SELECT TABLE</label>
+                                                        <div class="controls">
+                                                            <select onchange="CheckValidSelectTable()" name="SELECTTABLE" data-value="SELECTTABLE" data-name="SELECTTABLE" ajaxurl="/resa/getlisttableselect" class="span6 customselect" data-selected="@Model.SELECTTABLE"></select>
+                                                        </div>
+                                                    </div>
+                                                    break;
+                                                case 2:
+                                                    <div class="controls-left-50 nosize">
+                                                        <label class="control-label">TRIM TABLE</label>
+                                                        <div class="controls">
+                                                            <select onchange="CheckValidTrimTable()" name="TRIMTABLE" data-value="TREAMNAME" data-name="TREAMNAME" ajaxurl="/resa/getlisttabletrim" class="span6 customselect" data-selected="@Model.TRIMTABLE"></select>
+                                                        </div>
+                                                    </div>
+                                                    break;
+                                                case 3:
+                                                    <div class="controls-left-50 nosize">
+                                                        <label class="control-label">SHOULDER TABLE</label>
+                                                        <div class="controls">
+                                                            <select onchange="CheckValidShoulderTable()" name="SHOULDERTABLE" data-value="SHOULDERTABLE" data-name="SHOULDERTABLE" ajaxurl="/resa/getlistshoulderselect" class="span6 customselect" data-selected="@Model.SHOULDERTABLE"></select>
+                                                        </div>
+                                                    </div>
+                                                    break;
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="control-group span7">
+                                        <div class="controls-left-50 nosize">
+                                            <label class="control-label">Done:</label>
+                                            <div class="controls" style="text-align:center;">
+                                                <input name="ISDONE" class="span6" style="min-height: 22px;" type="checkbox" @(Model.ISDONE ? "checked" : "") value="true" />
+                                            </div>
+                                        </div>
+                                        <div class="controls-left-50 nosize">
+                                            <label class="control-label">Check:</label>
+                                            <div class="controls" style="text-align:center;">
+                                                <input name="ISCHECK" class="span6" style="min-height: 22px;" type="checkbox" @(Model.ISCHECK ? "checked" : "") value="true" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="clear:both;"></div>
+                            </div>
+                            <!-- END FORM-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="detailout" class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box blue">
+                        <div class="portlet-title">
+                            <div class="caption" style="min-width: 104px;"><i class="icon-reorder"></i>RESA DETAILS</div>
+                            <div class="tools">
+                                <a href="javascript:;" class="collapse"></a>
+                            </div>
+                        </div>
+                        <div class="portlet-body form">
+                            <!-- BEGIN FORM-->
+                            <div class="form-horizontal">
+                                <div class="row-fluid" style="margin-bottom: 5px;">
+                                    <div class="row-fluid">
+                                        <div class="span12">
+                                            @*<button style="@(lstResaStart.Count > 0 ? "" : "display:none;")" type="button" onclick="ShowTableResaStart()" class="btn blue">Add Resa Start</button>*@
+                                            <button type="button" onclick="ShowResaInsertResa()" class="btn blue">Add Selection</button>
+                                            <button type="button" onclick="PrintUncompletePallet()" class="btn blue">Print Uncomplete Pallet</button>
+                                            <select data-placeholder="Filter By" id="filtertable" name="FILTERTABLE" class="span12" data-multiple="true" data-chosen="true" multiple>
+                                                <option selected value="PCS">PCS</option>
+                                                <option selected value="KGS">KGS</option>
+                                                <option value="SQFT">SQFT</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="overflowtable" id="containresastart" style="display: none;">
+                                    <div class="row-fluid" style="margin-bottom: 5px;">
+                                        <div class="span12">
+                                            <select style="width:400px;" data-placeholder="Filter By" id="resastartfilter" class="span12" data-multiple="true" data-chosen="true" multiple>
+                                                @{
+                                                    foreach (var item in lstResaStart)
+                                                    {
+                                                        <option value="@item.NAME">@item.NAME</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <table id="resastartList" class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <td>SELECTION</td>
+                                                <td>PALLET NAME</td>
+                                                <td>NW</td>
+                                                <td>PCS</td>
+                                                <td>SQFT</td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                foreach (var item in lstResaStart)
+                                                {
+                                                    <tr idname="@item.ID">
+                                                        <td>
+                                                            <input type="hidden" name="NAME" value="@item.NAME" />
+                                                            <input type="hidden" name="NW" value="@item.NW" />
+                                                            <input type="hidden" name="PCS" value="@item.PCS" />
+                                                            <input type="hidden" name="SQFT" value="@item.SQFT" />
+                                                            <input type="hidden" name="SELECTIONID" value="@item.SELECTIONID" />
+                                                            <input type="hidden" name="SUBSELECTIONID" value="@item.SUBSELECTIONID" />
+                                                            <input type="hidden" name="SELECTIONFULL" value="@item.SELECTIONFULL" />
+                                                            @item.SELECTIONFULL
+                                                        </td>
+                                                        <td>@item.NAME</td>
+                                                        <td>@item.NW</td>
+                                                        <td>@item.PCS</td>
+                                                        <td>@item.SQFT</td>
+                                                        <td>
+                                                            <button class="btn blue" onclick="AddRowResaStart(this)">Add</button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div name="tableresa">
+                                </div>
+
+                                <div class="control-group">
+                                    <div class="controls-left-30 nosize">
+                                        <label class="control-label">Output PCS</label>
+                                        <div class="controls">
+                                            <input disabled name="grandtotalpcs" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 nosize">
+                                        <label class="control-label">Output KGS</label>
+                                        <div class="controls">
+                                            <input disabled name="grandtotalkgs" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 nosize">
+                                        <label class="control-label">Output SQFT</label>
+                                        <div class="controls">
+                                            <input disabled name="grandtotalsqft" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END FORM-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box blue" style="border-top: 1px solid #b4cef8;">
+                        <div class="portlet-body form contentconclude">
+                            <div class="form-horizontal">
+                                <div class="control-group">
+                                    <div class="controls-left-30 nosize">
+                                        <label class="control-label">Equals PCS</label>
+                                        <div class="controls">
+                                            <input disabled name="ratepcs" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 nosize">
+                                        <label class="control-label">Equals KGS</label>
+                                        <div class="controls">
+                                            <input disabled name="ratekgs" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 nosize">
+                                        <label class="control-label">Equals SQFT</label>
+                                        <div class="controls">
+                                            <input disabled name="ratesqft" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <div class="controls-left-30 nosize">
+                                        <div class="controls">
+                                            <input disabled name="percentpcs" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 nosize">
+                                        <div class="controls">
+                                            <input disabled name="percentkgs" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 nosize">
+                                        <div class="controls">
+                                            <input disabled name="percentsqft" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <div class="controls-left">
+                                        <label class="control-label">CONCLUDE</label>
+                                        <div class="controls">
+                                            <label class="control-label" name="conclude" style="color:red; font-weight:bold;width:auto !important;"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row-fluid" id="detailin">
+                <div class="span12">
+                    <div class="portlet box blue">
+                        <div class="portlet-title">
+                            <div class="caption" style="min-width: 104px;"><i class="icon-reorder"></i>INPUT DETAIL</div>
+                            @*<div class="filter-on-title">
+                                    <select name="" onchange="LoadListPalletDetail(this)" class="span12"></select>
+                                </div>*@
+                            <div class="tools">
+                                <a href="javascript:;" class="collapse"></a>
+                            </div>
+                        </div>
+                        <div id="buyer" class="portlet-body form">
+                            <!-- BEGIN FORM-->
+                            <div class="form-horizontal">
+                                <input type="hidden" name="" value="" />
+                                <input type="hidden" name="" value="" />
+                                <div class="control-group">
+                                    <div class="controls-left-30 nosize">
+                                        <label class="control-label">Input PCS</label>
+                                        <div class="controls">
+                                            <input disabled name="pallettotalpcs" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 nosize">
+                                        <label class="control-label">Input KGS</label>
+                                        <div class="controls">
+                                            <input disabled name="pallettotalkgs" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 nosize">
+                                        <label class="control-label">Input SQFT</label>
+                                        <div class="controls">
+                                            <input disabled name="pallettotalsqft" autocomplete="off" type="text" class="span6 m-wrap" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="srcImport">
+                                    <div class="control-group">
+                                        <div class="controls-left">
+                                            <label class="control-label">Input Container</label>
+                                            <div class="controls">
+                                                <select style="max-width:100%;width: auto;" id="importContainer" name="PKLID" data-value="ID" data-name="SelectNameList" ajaxurl="/resa/getlistcntundone" afterload="ShowUpLoadPage" class="customselect span12" data-selected="@(ViewBag.Cnt != null ? ViewBag.Cnt : "")" data-none="true"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <table id="tableimp" class="table table-striped table-bordered table-hover" style="width: 60%; position: relative;float:left;margin: 5px 0 0 5px;z-index:1;">
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Material</th>
+                                                    <th>Pallet No.</th>
+                                                    @*<th>Cnt</th>
+                                                        <th>Imp File</th>*@
+                                                    <th>PCS</th>
+                                                    <th>KGS</th>
+                                                    <th>SQFT</th>
+                                                    <th style="min-width:10px;"></th>
+                                                    @*<th style="min-width:10px;"></th>*@
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int index = 1;
+                                                    foreach (var item in (List<ModelHelper.ViewModel.ImpPalletReport>)ViewBag.ListMaterialImported)
+                                                    {
+                                                        <tr data-item="@item.ID">
+                                                            <td>@index</td>
+                                                            <td>@item.MATERIALFULL</td>
+                                                            <td>@item.PALLETDONECODE</td>
+                                                            @*<td>@item.IMPORTPKL</td>
+                                                                <td>@item.IMPFILEID</td>*@
+                                                            <td style="text-align: right;">@item.PCS.FormatDecimal(0)</td>
+                                                            <td style="text-align: right;">@item.NW.FormatDecimal(0)</td>
+                                                            <td style="text-align: right;">@item.SQFT.FormatDecimal(2)</td>
+                                                            <td>
+                                                                <button type="button">
+                                                                    <span class="icon-play" onclick="RemoveSelect(this)"></span>
+                                                                </button>
+                                                            </td>
+                                                            @*<td>
+                                                                    <button type="button">
+                                                                        <span class="icon-print" onclick="PrintPallet(this)"></span>
+                                                                    </button>
+                                                                </td>*@
+                                                        </tr>
+                                                        index++;
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <ul id="container" class="connectedSortable palletSign">
+                                            @{
+                                                foreach (var item in (List<ModelHelper.ViewModel.ImpPalletReport>)ViewBag.ListMaterialImported)
+                                                {
+                                                    <li style="display: none;" data-id="@item.ID" data-pcs="@item.PCS" data-material="@item.MATERIALID" data-submaterial="@item.SUBMATERIALID" data-sqft="@item.SQFT" data-impfile="@item.IMPFILEID" data-cnt="@item.IMPORTPKL" data-fullname="@item.MATERIALFULL" data-nw="@item.NW" data-donecode="@item.PALLETDONECODE" class="ui-state-highlight" ondblclick="LoadPop(this)">@item.NAME</li>
+                                                }
+                                            }
+                                        </ul>
+                                        <div id="palletunsign" class="connectSortGroup palletUnsign"></div>
+                                    </div>
+                                </div>
+                                <div style="width: 100%; height:35px;"></div>
+                                @{
+                                    var listdata = (List<ModelDatabase.MD_PALETTE>)ViewBag.ListSemiImported;
+                                    if (listdata != null && listdata.Count > 0)
+                                    {
+                                        <div id="srcSemiProduction">
+                                            <div class="control-group">
+                                                <table id="tablesemi" class="table table-striped table-bordered table-hover" style="width: 60%; position: relative;float:left;margin: 5px 0 0 5px;z-index:1;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>No.</th>
+                                                            <th style="min-width: 80px;">Selection</th>
+                                                            <th>Pallet No.</th>
+                                                            <th>Layer</th>
+                                                            <th>Net Weight</th>
+                                                            <th>Gross Weight</th>
+                                                            <th>Square Foot</th>
+                                                            <th>Resa</th>
+                                                            <th>SNo Resa</th>
+                                                            <th style="min-width:10px;"></th>
+                                                            <th style="min-width:10px;"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @{
+                                                            index = 1;
+                                                            foreach (var item in (List<ModelDatabase.MD_PALETTE>)ViewBag.ListSemiImported)
+                                                            {
+                                                                <tr data-item="@item.ID">
+                                                                    <td>@index</td>
+                                                                    <td>@item.FULLSELECTION</td>
+                                                                    <td>@item.NAME</td>
+                                                                    <td style="text-align: right;">@item.HIDE</td>
+                                                                    <td style="text-align: right;">@item.NETWEIGHT</td>
+                                                                    <td style="text-align: right;">@item.GROSSWEIGHT</td>
+                                                                    <td style="text-align: right;">@item.SQUAREFOOT</td>
+                                                                    <td>@item.INDEXRESA</td>
+                                                                    <td>@item.RESACODE</td>
+                                                                    <td>
+                                                                        <button type="button">
+                                                                            <span class="icon-play" onclick="RemoveSelect(this)"></span>
+                                                                        </button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button type="button">
+                                                                            <span class="icon-print" onclick="PrintPallet(this)"></span>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                index++;
+                                                            }
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                                <ul id="containersemi" class="connectedSortable2 palletSign">
+                                                    @{
+                                                        foreach (var item in (List<ModelDatabase.MD_PALETTE>)ViewBag.ListSemiImported)
+                                                        {
+                                                            <li data-id="@item.ID" data-layer="@item.HIDE" data-selection="@item.SELECTION" data-subsel="@item.SUBSELECTION" data-sqft="@item.SQUAREFOOT" data-gw="@item.GROSSWEIGHT" data-nw="@item.NETWEIGHT" data-resa="@item.RESACODE" data-indexresa="@item.INDEXRESA" class="ui-state-highlight" style="display: none;" ondblclick="LoadPop(this)">@item.NAME</li>
+                                                        }
+                                                    }
+                                                </ul>
+                                                <ul id="palletsemiunsign" class="connectedSortable2 palletUnsign"></ul>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+
+                            </div>
+                            <!-- END FORM-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="clear:both"></div>
+
+            <div class="row-fluid" id="actioncontent">
+                <div class="span12">
+                    <div class="portlet box blue no-border">
+                        <div class="portlet-body form">
+                            <div class="form-actions no-border">
+                                <button type="button" onclick="SaveResa()" class="btn blue" style="width: 200px;">Save<br />Lưu Resa</button>
+                                <button type="button" onclick="DoneResa()" class="btn blue" style="width: 200px;">Done<br />Kết thúc Resa</button>
+                                <button type="button" style="width: 92px;" class="btn" onclick="location.href = '/resa'">Cancel<br />Hủy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE -->
+    </div>
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-fileupload/bootstrap-fileupload.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/gritter/css/jquery.gritter.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/chosen-bootstrap/chosen/chosen.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/clockface/css/clockface.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-datepicker/css/datepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-timepicker/compiled/timepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-colorpicker/css/colorpicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-datetimepicker/css/datetimepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/jquery-multi-select/css/multi-select-metro.css" />
+    <link href="/Content/assets/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/assets/plugins/bootstrap-switch/static/stylesheets/bootstrap-switch-metro.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/jquery-tags-input/jquery.tagsinput.css" />
+    <link href="~/Content/jqueryUi.css" rel="stylesheet" />
+    @*<link href="~/Content/stylesheet.css" rel="stylesheet" />*@
+    <!-- END PAGE LEVEL STYLES -->
+    <link href="~/Content/jqueryUi.css" rel="stylesheet" />
+
+    <style>
+        #importContainer_chosen {
+            margin-top: 5px;
+        }
+
+        .connectedSortable2 {
+            border: 1px solid #eee;
+            width: auto;
+            min-height: 20px;
+            list-style-type: none;
+            margin: 0;
+            padding: 5px 0 0 0;
+            float: right;
+            margin-right: 10px;
+        }
+
+            .connectedSortable2 li {
+                font-size: 1.2em;
+                width: 120px;
+                border-radius: 5px !important;
+                padding: 5px 10px;
+                margin: 5px 10px;
+                cursor: pointer;
+                float: left;
+            }
+
+        #container.connectedSortable2 li {
+            min-width: 120px;
+            width: auto;
+        }
+
+        .connectSortGroup {
+            border: 1px solid #eee;
+            width: 190px;
+            min-height: 20px;
+            list-style-type: none;
+            margin: 0;
+            padding: 5px 0 0 0;
+            float: right;
+            margin-right: 10px;
+        }
+
+            .connectSortGroup .connectedSortable {
+                border: 1px solid #eee;
+                list-style-type: none;
+                margin-left: 0px;
+                margin: 0 5px 5px 5px;
+            }
+
+            .connectSortGroup .title {
+                border: 1px solid #eee;
+                border-radius: 15px 15px 0 0 !important;
+                margin: 5px 5px 0px 5px;
+                padding: 5px;
+                text-align: center;
+                background-color: #eee;
+            }
+
+            .connectSortGroup ul.connectedSortable .title {
+                text-align: center;
+                width: 100%;
+                background-color: #82a5a5;
+                border-radius: 15px 15px 0 0 !important;
+                font-size: 15px;
+            }
+
+            .connectSortGroup li {
+                font-size: 15px;
+                width: auto;
+                border-radius: 5px !important;
+                padding: 5px 2px;
+                margin: 5px 10px;
+                cursor: pointer;
+                float: left;
+            }
+
+        #container.connectSortGroup li {
+            min-width: 120px;
+            width: auto;
+        }
+
+        #palletunsign, #palletsemiunsign {
+            max-height: 350px;
+            overflow: auto;
+        }
+
+        #resastartfilter_chosen {
+            width: 400px !important;
+        }
+
+        #containersemi {
+            min-height: 41px !important;
+            width: 650px !important;
+        }
+
+        #palletsemiunsign {
+            width: 360px !important;
+        }
+
+        #container {
+            width: 650px !important;
+        }
+
+        #palletunsign {
+            width: 360px !important;
+        }
+
+        .palletSign {
+            min-height: 41px !important;
+        }
+
+        table#resatable thead > tr > th, table#tableimp thead > tr > th {
+            padding: 1px 1px !important;
+            font-size: 14px !important;
+        }
+
+        table#tableimp thead > tr > th {
+            padding: 3px 1px !important;
+        }
+
+        table#resatable tbody > tr > td, table#tableimp tbody > tr > td {
+            font-size: 11px !important;
+        }
+
+        table#tableimp button {
+            height: 19px;
+            font-size: 10px;
+            line-height: 1em;
+        }
+
+        #ovvresa {
+            padding: 2px 10px 2px 10px !important;
+        }
+        #SELECTIONFULLDROPDOWN_chosen {
+            min-width:280px !important;
+        }
+        .controls-left-50 {
+            min-width: 300px;
+        }
+    </style>
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="~/Content/assets/plugins/chosen-bootstrap/chosen/chosen.jquery.js"></script>
+    <script src="~/Content/assets/plugins/uniform/jquery.uniform.js"></script>
+    <script src="~/Scripts/Common/customsuggest.js"></script>
+    <script src="~/Scripts/Common/customvalidate.js"></script>
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script src="~/Scripts/jqueryUI.js"></script>
+    <script src="~/Scripts/business/resa.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            getListSemiProduct();
+            ActiveDragDropSemi();
+
+            ActiveFilterStart();
+            ActiveChoseFilter($('#filtertable'));
+            BuilResaTableJS();
+        })
+    </script>
+}

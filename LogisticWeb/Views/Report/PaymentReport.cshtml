@@ -1,0 +1,203 @@
+﻿@using LogisticWeb.Common
+@{
+    ViewBag.Title = "LamipelVN | Import File Tracking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+
+    @Html.Action("MenuSiteBar", "Common")
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <ul class="breadcrumb sitemap"></ul>
+                    @*<ul class="breadcrumb">
+                    <li>
+                        <i class="icon-home"></i>
+                        <a href="/">Home</a>
+                        <i class="icon-angle-right"></i>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">Pallet</a>
+                        <i class="icon-angle-right"></i>
+                    </li>
+                </ul>*@
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box light-grey">
+                        <div class="portlet-title">
+                            <div class="caption" style="font-weight: bold; text-decoration: underline;"><i class="icon-globe"></i>NOT PAID</div>
+                        </div>
+                        <div class="portlet-body tablejs">
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="customdatatable_filter dataTables_filter" realateid="tbList">
+                                        @*<label style="float:left;">
+                                        Search:<input id="freetext" name="freetext" data-compare="IMPFILE;PKLNAME" type="text" class="m-wrap medium" placeholder="freetext" />
+                                    </label>*@
+                                        <select data-placeholder="Shipment Status Filter" id="SHIPMENTSTATUS" name="SHIPMENTSTATUS" class="span6" data-multiple="true" data-chosen="true" data-checkisnull="false" multiple>
+                                            <option value="" disabled style="display:none">--All status--</option>
+                                            <option value="PLANNED">Planned</option>
+                                            <option value="ON THE WAY">On the way</option>
+                                            <option value="ARRIVAL">Arrival</option>
+                                            <option value="PART OF STOCKED">Part of Stocked</option>
+                                            <option value="STOCKED">Stocked</option>
+                                            <option value="IHD NEED REV">In Home date need review</option>
+                                        </select>
+                                        <select style="display: none;" id="PAYMENTSTATUS" name="PAYMENTSTATUS" data-checkisnull="false">
+                                            <option selected value="Not Paid"></option>
+                                        </select>
+                                        <input type="button" class="btn btn-search btn-success" value="Search" style="width: 62px !important;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-fluid row-fluid-auto">
+                                <table actioncolwidth="5" aligncol="" formatsubstr="" colwidth="30;20;50;50;60;60;30;30;40;50" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" control="importfile" idCol="ID" urlquery="/importfile/getlist" class='table table-striped table-bordered table-hover customdatatable' headerCol="FILE,PAID,CONTRACT,SUPPLIER,INV,B/L,VALUE,PAID,IHD,ACTNOTE" id='tbList' arrCol="IMPFILE,PAYMENTSTATUS,IMPORTCONTRACTCODE,SUPPLIERNAME,INVOICE,BLNO,INVOICEVALUE,PAIDVALUE,INHOUSEDATE,ACCOUNTREMARK" exportCol="IMPFILE,PAYMENTSTATUS,IMPORTCONTRACTCODE,SUPPLIERNAME,INVOICE,BLNO,INVOICEVALUE,PAIDVALUE,INHOUSEDATE,ACCOUNTREMARK" @(User != null && User.ISADMIN ? "data-admin=true" : "") editcol="ACCOUNTREMARK" bluractioneditcol="UpdateRemarkAccount" blurvalue="ID" replaceEdit="true"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box light-grey">
+                        <div class="portlet-title">
+                            <div class="caption" style="font-weight: bold; text-decoration: underline;"><i class="icon-globe"></i>PAID</div>
+                        </div>
+                        <div class="portlet-body tablejs">
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="customdatatable_filter dataTables_filter" realateid="tbList2">
+                                        @*<label style="float:left;">
+                                        Search:<input id="freetext" name="freetext" data-compare="IMPFILE;PKLNAME" type="text" class="m-wrap medium" placeholder="freetext" />
+                                    </label>*@
+                                        <select data-placeholder="Shipment Status Filter" id="SHIPMENTSTATUS2" name="SHIPMENTSTATUS" class="span6" data-multiple="true" data-chosen="true" data-checkisnull="false" multiple>
+                                            <option value="" disabled style="display:none">--All status--</option>
+                                            <option selected value="PLANNED">Planned</option>
+                                            <option selected value="ON THE WAY">On the way</option>
+                                            <option selected value="ARRIVAL">Arrival</option>
+                                            <option selected value="PART OF STOCKED">Part of Stocked</option>
+                                            <option value="STOCKED">Stocked</option>
+                                            <option selected value="IHD NEED REV">In Home date need review</option>
+                                        </select>
+                                        <select style="display: none;" id="PAYMENTSTATUS2" name="PAYMENTSTATUS" data-checkisnull="false">
+                                            <option selected value="Paid"></option>
+                                        </select>
+                                        <input type="button" class="btn btn-search btn-success" value="Search" style="width: 62px !important;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-fluid row-fluid-auto">
+                                <table actioncolwidth="50" aligncol="" formatsubstr="" colwidth="30;20;50;50;60;60;30;30;40;50" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" control="importfile" idCol="ID" urlquery="/importfile/getlist" class='table table-striped table-bordered table-hover customdatatable' headerCol="FILE,PAID,CONTRACT,SUPPLIER,INV,B/L,VALUE,PAID,IHD,ACTNOTE" id='tbList2' arrCol="IMPFILE,PAYMENTSTATUS,IMPORTCONTRACTCODE,SUPPLIERNAME,INVOICE,BLNO,INVOICEVALUE,PAIDVALUE,INHOUSEDATE,ACCOUNTREMARK" exportCol="IMPFILE,PAYMENTSTATUS,IMPORTCONTRACTCODE,SUPPLIERNAME,INVOICE,BLNO,INVOICEVALUE,PAIDVALUE,INHOUSEDATE,ACCOUNTREMARK" @(User != null && User.ISADMIN ? "data-admin=true" : "") editcol="ACCOUNTREMARK" bluractioneditcol="UpdateRemarkAccount" blurvalue="ID" replaceEdit="true"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" href="/Content/assets/plugins/data-tables/DT_bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/chosen-bootstrap/chosen/chosen.css" />
+    <!-- END PAGE LEVEL STYLES -->
+    <style>
+        table {
+            font-size: 9px !important;
+        }
+
+            table th {
+                font-size: 13px !important;
+            }
+
+            table tbody tr td {
+                font-size: 12px !important;
+            }
+
+                table tbody tr td.paidstyles {
+                    font-weight: bold;
+                    background-color: #e4f3f5 !important;
+                }
+
+        .table td, .table td input, .table td select {
+            font-size: 12px !important;
+        }
+
+        .table th, .table td {
+            padding: 2px 8px !important;
+        }
+
+        .table th {
+            font-size: 13px !important;
+        }
+
+        .table td, .table td input, .table td select {
+            font-size: 12px !important;
+        }
+        #SHIPMENTSTATUS_chosen, #SHIPMENTSTATUS2_chosen {
+            width: 666px !important;
+        }
+        table input {
+            margin-bottom: 0px !important;
+        }
+        .table th, .table td {
+            padding: 2px 2px !important;
+        }
+    </style>
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script type="text/javascript" src="/Content/assets/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script src="~/Content/assets/plugins/chosen-bootstrap/chosen/chosen.jquery.js"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/Content/assets/scripts/app.js"></script>
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <script src="~/Scripts/Common/customtable.js"></script>
+    <script src="~/Scripts/business/contract.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#SHIPMENTSTATUS').chosen();
+            $('#SHIPMENTSTATUS2').chosen();
+        })
+        function UpdateRemarkAccount(item, dataval) {
+            var $item = $(item);
+            var exval = $item.attr('exval');
+            var value = $item.val();
+            if (value != exval) {
+                $.ajax({
+                    url: '/importfile/updateaccountremark',
+                    type: 'POST',
+                    data: { remarkvalue: $item.val(), id: parseInt(dataval) },
+                    success: function (res) {
+                        $item.attr('exval', value);
+                    }
+                });
+            }
+        }
+    </script>
+}

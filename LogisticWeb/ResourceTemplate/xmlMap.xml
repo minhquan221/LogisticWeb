@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<templateSrc>
+  <item id="ShippingMarkPreview">/Templates/ShippingMarkPreviewBeta2.html</item>
+  <item id="ShippingMarkPrint">/Templates/ShippingMarkPrintBeta2.html</item>
+  <item id="UncompletePallet">/Templates/UncompletePallet.html</item>
+  <item id="PalletSemiPrint">/Templates/ShippingMarkPrintBeta2.html</item>
+  <item id="ImportLabelPrint">/Templates/ShippingMarkImportPrint.html</item>
+  <item id="ItemContract">/Templates/ItemContract.html</item>
+  <item id="ImportItemContract">/Templates/ImportItemContract.html</item>
+  <item id="ActionBuyer">/Templates/ActionBuyer.html</item>
+  <item id="ActionConsignee">/Templates/ActionConsignee.html</item>
+  <item id="ActionSupplier">/Templates/ActionSupplier.html</item>
+  <item id="ActionShipper">/Templates/ActionShipper.html</item>
+  <item id="ImportPKL">/Templates/ImportPKL.html</item>
+  <item id="ImportPalletDetail">/Templates/ImportPalletDetail.html</item>
+  <item id="ImportPalletPrint">/Templates/ImportPalletPrint.html</item>
+</templateSrc>

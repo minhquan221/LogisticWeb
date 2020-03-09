@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<!--
+Template Name: LamipelVN - Responsive Admin Dashboard Template build with Twitter Bootstrap 2.3.2
+Version: 1.4
+Author: KeenThemes
+Website: http://www.keenthemes.com/preview/?theme=LamipelVN
+Purchase: http://themeforest.net/item/LamipelVN-responsive-admin-dashboard-template/4021469
+-->
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="/Content/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/assets/plugins/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/assets/css/style-metro.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/spinkit/spinkit.css" rel="stylesheet" />
+    <link href="/Content/assets/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/assets/css/style-responsive.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/assets/css/themes/light.css" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="/Content/assets/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/fontroboto.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <link href="~/Content/sweetalert2.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    @RenderSection("styles", required: false)
+    <!-- END PAGE LEVEL STYLES -->
+    <link rel="shortcut icon" href="/favicon.ico" />
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed page-footer-fixed">
+    <div class="header navbar navbar-inverse navbar-fixed-top">
+        <!-- BEGIN TOP NAVIGATION BAR -->
+        <div class="navbar-inner" style="height: 60px;">
+            <div class="container-fluid">
+                <div class="" style="margin-top: 5px;float:left;" onclick="return window.location.href = '/';">
+                    <img src="/Content/left-arr.png" style="height: 50px;">
+                </div>
+                <div class="" style="margin-top: 5px;float:right;" onclick="return window.location.href = '/account/logout';">
+                    <img src="/Content/menu.png" style="height: 50px;">
+                </div>
+                <!-- BEGIN LOGO -->
+                @*<a class="brand" href="/">
+                        <div class="logo-str">
+                            <img src="~/Content/logo-trans.png" style="width: 41px;margin-top: -10px;float: left;" />
+                            <span class="spanlogo">LAMIPEL ERP</span>
+                        </div>
+                    </a>*@
+                <!-- END LOGO -->
+                <!-- BEGIN TOP NAVIGATION MENU -->
+                <!-- END TOP NAVIGATION MENU -->
+            </div>
+        </div>
+        <!-- END TOP NAVIGATION BAR -->
+    </div>
+
+
+    <!-- END HEADER -->
+    <!-- BEGIN CONTAINER -->
+
+    @RenderBody()
+
+    <!-- END CONTAINER -->
+    <!-- BEGIN FOOTER -->
+    <div id="maskBoxes" class="" tabindex="-1" style="display: none;">
+        <div id="maskBoxesFake"></div>
+        <div class="maskBoxeContent">
+            <div class="col-12">
+                <div class="sk-wave">
+                    <div class="sk-rect sk-rect1"></div>
+                    <div class="sk-rect sk-rect2"></div>
+                    <div class="sk-rect sk-rect3"></div>
+                    <div class="sk-rect sk-rect4"></div>
+                    <div class="sk-rect sk-rect5"></div>
+                </div>
+            </div>
+            <span id="msgLoading"></span>
+        </div>
+    </div>
+    <button type="button" id="SoundPlay" onclick="PlayS()" style="display: none;"></button>
+    <!-- END FOOTER -->
+    <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+    <!-- BEGIN CORE PLUGINS -->
+    <script src="/Content/assets/plugins/jquery-1.10.1.min.js" type="text/javascript"></script>
+    <script src="/Content/assets/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+    <!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+    <script src="/Content/assets/plugins/jquery-ui/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+    <script src="/Content/assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/Content/assets/plugins/bootstrap-hover-dropdown/twitter-bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="~/Scripts/alert/sweetalert2.all.min.js"></script>
+    <script src="~/Scripts/jquery.cookie.js"></script>
+    <script type="text/javascript" src="~/Scripts/Common/commonmobile.js"></script>
+    <script src="~/Scripts/Common/allcontrols.js"></script>
+    
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        //var beep = new Audio("http://scancode.lamipelvn.com/beep.wav");
+        //function PlayS() {
+        //    beep.play();
+        //}
+
+        //function PlaySound(soundObj) {
+        //    try {
+        //        $('#SoundPlay').click();
+        //        alert('play sound done');
+        //    } catch (ex) {
+        //        alert(ex.toString());
+        //    }
+        //}
+    </script>
+    <!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

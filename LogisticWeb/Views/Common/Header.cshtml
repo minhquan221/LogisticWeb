@@ -1,0 +1,45 @@
+﻿<div class="header navbar navbar-inverse navbar-fixed-top">
+    <!-- BEGIN TOP NAVIGATION BAR -->
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <!-- BEGIN LOGO -->
+            <a class="brand" href="/">
+                <div class="logo-str">LAMIPEL</div>
+            </a>
+            <!-- END LOGO -->
+            <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+            <a href="javascript:;" class="btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
+                <img src="/Content/assets/img/menu-toggler.png" alt="" />
+            </a>
+            <!-- END RESPONSIVE MENU TOGGLER -->
+            <!-- BEGIN TOP NAVIGATION MENU -->
+            <ul class="nav pull-right">
+
+                <!-- BEGIN NOTIFICATION DROPDOWN -->
+                @Html.Action("NotificationBar", "Notification")
+
+                <!-- END NOTIFICATION DROPDOWN -->
+                <!-- BEGIN INBOX DROPDOWN -->
+                @*@Html.Action("InboxMail", "Notification")*@
+
+                <!-- END INBOX DROPDOWN -->
+                <!-- BEGIN TODO DROPDOWN -->
+                @*@Html.Action("ToDoNotification", "Notification")*@
+
+                <!-- END TODO DROPDOWN -->
+                <!-- BEGIN USER LOGIN DROPDOWN -->
+                <li class="dropdown user">
+                    <a href="/importpkl">
+                        <img style="height:29px;" src="/Content/logo-warehouse.png" />
+                    </a>
+                </li>
+                @Html.Action("ProfileHeaderUser", "Common")
+
+                <!-- END USER LOGIN DROPDOWN -->
+                <!-- END USER LOGIN DROPDOWN -->
+            </ul>
+            <!-- END TOP NAVIGATION MENU -->
+        </div>
+    </div>
+    <!-- END TOP NAVIGATION BAR -->
+</div>

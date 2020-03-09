@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "LamipelVN | Login Page";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+
+<!-- BEGIN LOGIN -->
+<div class="content">
+    <!-- BEGIN LOGIN FORM -->
+    <div class="form" id="frm" action="/account/login" method="post">
+        <h3 class="form-title">
+            Login to your account
+
+        </h3>
+        <div class="alert alert-error hide">
+            <button class="close" data-dismiss="alert"></button>
+            <span></span>
+        </div>
+        <div class="control-group">
+            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+            <label class="control-label visible-ie8 visible-ie9">UserName</label>
+            <div class="controls">
+                <div class="input-icon left">
+                    <i class="icon-user"></i>
+                    <input name="UserName" type="text" class="m-wrap placeholder-no-fix" placeholder="User Login" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label visible-ie8 visible-ie9">Password</label>
+            <div class="controls">
+                <div class="input-icon left">
+                    <i class="icon-lock"></i>
+                    <input name="Password" type="password" class="m-wrap placeholder-no-fix" placeholder="Enter password" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div class="form-actions">
+            <label class="checkbox">
+                <input type="checkbox" name="remember" value="1" /> Remember me
+            </label>
+            <button id="btnlogin" data-frm="frm" type="button" class="loginbtn btn pull-right">
+                Login <i class="m-icon-swapright m-icon-white"></i>
+            </button>
+        </div>
+        @*<div class="control-group">
+                Not have account? <a href="/account/register">Register here</a>
+            </div>*@
+    </div>
+    <!-- END LOGIN FORM -->
+</div>
+<!-- END LOGIN -->
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input[name=UserName], input[name=Password]').on('keydown', function (e) {
+                var code = (e.keyCode ? e.keyCode : e.which);
+                if (code == 13) { //Enter keycode
+                    Login($('#btnlogin'));
+                }
+            })
+        });
+    </script>
+}

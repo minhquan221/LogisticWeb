@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "LamipelVN | Export Mail Report Stock";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+    @{
+        if (User != null && User.ISADMIN)
+        {
+            @Html.Action("MenuSiteBar", "Common")
+        }
+    }
+
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content @(User != null && !User.ISADMIN ? "no-margin" : "")">
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box light-grey">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-globe"></i> </div>
+                        </div>
+                        <div class="portlet-body tablejs">
+                            <div class="table-toolbar">
+                                <div class="btn-group pull-right">
+                                    <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                        Tools <i class="icon-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a onclick="ExportSearch()" href="javascript:void(0)">Export Excel</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="customdatatable_filter dataTables_filter" realateid="tbList">
+                                        From date: <input placeholder="yyyy-mm-dd" name="fromdate" type="text" class="m-wrap" autocomplete="off" /> -
+                                        To date: <input placeholder="yyyy-mm-dd" name="todate" type="text" class="m-wrap" autocomplete="off" />
+                                        <input type="button" class="btn btn-search btn-success" onclick="ExportData()" value="Export" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" href="/Content/assets/plugins/data-tables/DT_bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" />
+    <link type="text/css" href="~/Content/assets/plugins/bootstrap-datepicker/css/datepicker.css" rel="stylesheet" />
+    <!-- END PAGE LEVEL STYLES -->
+    <style>
+        table {
+            font-size: 11px !important;
+        }
+
+            table thead {
+                font-size: 12px !important;
+            }
+
+        .table td, .table td input, .table td select {
+            font-size: 11px !important;
+        }
+
+        .table th, .table td {
+            padding: 8px 8px !important;
+        }
+    </style>
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script type="text/javascript" src="/Content/assets/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/bootstrap-daterangepicker/date.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="~/Content/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/Content/assets/scripts/app.js"></script>
+    <script src="~/Scripts/Common/customtable.js"></script>
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <script src="~/Scripts/business/exportreport.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input[name=fromdate],input[name=todate]').datepicker(
+                {
+                    autoclose: true,
+                    format: 'yyyy-mm-dd',
+                    
+                }
+            ).on('changeDate', function (e)
+            {
+                ValidateDate();
+            })
+        });
+    </script>
+}

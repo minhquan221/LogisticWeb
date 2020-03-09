@@ -1,0 +1,896 @@
+﻿@{
+    List<string> eleFilter = (List<string>)ViewBag.Filter;
+    int maxCol = 10;
+    int perRow = eleFilter != null ? eleFilter.Count : 3;
+    int maxPalletPerSelection = 0;
+    int singlerow = 0;
+    if (ViewBag.ProductionTable != null)
+    {
+        List<ModelHelper.ViewModel.ResaProductionTable> listProduction = (List<ModelHelper.ViewModel.ResaProductionTable>)ViewBag.ProductionTable;
+        var detailPallet = listProduction.GroupBy(x => x.NAME).ToList();
+        var SelectionList = listProduction.GroupBy(x => x.SELECTIONFULL).ToList();
+        foreach (var item in SelectionList)
+        {
+            var count = item.ToList().GroupBy(x => x.NAME).Count();
+            if (maxPalletPerSelection < count)
+            {
+                maxPalletPerSelection = count;
+                var countnoname = listProduction.Where(x => x.SELECTIONFULL == item.Key).Where(x => string.IsNullOrEmpty(x.NAME)).Count();
+                if (countnoname > 0)
+                {
+                    maxPalletPerSelection = maxPalletPerSelection - countnoname <= 0 ? 1 : maxPalletPerSelection - countnoname;
+                }
+            }
+        }
+        if (maxPalletPerSelection > maxCol)
+        {
+            singlerow = maxPalletPerSelection / maxCol;
+            if (maxPalletPerSelection % maxCol != 0)
+            {
+                singlerow = singlerow + 1;
+            }
+            perRow = singlerow * perRow;
+            maxPalletPerSelection = maxCol;
+        }
+        else
+        {
+            singlerow = maxPalletPerSelection / maxCol;
+            if (maxPalletPerSelection % maxCol != 0)
+            {
+                singlerow = singlerow + 1;
+            }
+            perRow = singlerow * perRow;
+            //maxPalletPerSelection = maxCol;
+        }
+        int colspan = maxPalletPerSelection > 1 ? maxPalletPerSelection : 1;
+        <table id="resatable" class="table table-striped table-bordered table-hover" datacolspan="@colspan.ToString()" datarowspan="@(singlerow.ToString())">
+            <thead>
+                <tr>
+                    <th>Selection</th>
+                    <th>Input Incomplete Pallet</th>
+                    <th colspan="@colspan">Detail</th>
+                    <th style="width: 100px;">Incomplete Pallet</th>
+                    <th colspan="3">Selection Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var selectT in listProduction.GroupBy(x => x.SELECTIONFULL))
+                    {
+                        var listProdPerSelect = listProduction.Where(x => x.SELECTIONFULL == selectT.Key).GroupBy(x => x.NAME).ToList();
+
+                        List<ModelHelper.ViewModel.ResaProductionTable>[] rowdetail = new List<ModelHelper.ViewModel.ResaProductionTable>[singlerow];
+                        int row = 0;
+                        int coutotal = listProdPerSelect.Count();
+                        int k = 0;
+                        while (coutotal > 0)
+                        {
+                            int maxC = maxPalletPerSelection;
+                            if (maxC > coutotal)
+                            {
+                                maxC = coutotal;
+                            }
+                            int low = maxC;
+                            List<ModelHelper.ViewModel.ResaProductionTable> palletSelect = new List<ModelHelper.ViewModel.ResaProductionTable>();
+                            while (low > 0)
+                            {
+
+                                palletSelect.Add(listProdPerSelect[k].First());
+                                low--;
+
+                                k++;
+                            }
+                            rowdetail[row] = palletSelect;
+                            coutotal = coutotal - maxC <= 0 ? 0 : coutotal - maxC;
+                            row++;
+                        }
+                        for (int bindrow = 0; bindrow < rowdetail.Length; bindrow++)
+                        {
+                            var list = rowdetail[bindrow];
+                            if (list != null)
+                            {
+                                //foreach (var pa in list)
+                                //{
+                                if (bindrow == 0)
+                                {
+                                    for (int ele = 0; ele < eleFilter.Count; ele++)
+                                    {
+                                        switch (ele)
+                                        {
+                                            case 0:
+                                                switch (eleFilter[ele])
+                                                {
+                                                    case "PCS":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+
+                                                            <td rowspan="@(rowdetail.Where(x => x != null).Count() * eleFilter.Count)">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="LISTSTARTID" value="@(string.Join(";", listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).Select(x => x.IDSTARTRESA)))" />
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="MERGESELECTIONID" value="@list.First().MERGESELECTIONID" />
+
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="SELECTIONID" value="@list.First().SELECTIONID" />
+
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="SUBSELECTIONID" value="@list.First().SUBSELECTIONID" />
+                                                                @list.First().SELECTIONFULL
+                                                            </td>
+
+                                                            <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTPCS" value="@list.First().STARTPCS" />
+                                                                @list.First().STARTPCS
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                    -
+                                                                </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                            <input type="hidden" name="PCS" group="@list.First().MERGESELECTIONID" value="@pallet.PCS" />
+                                                                            @pallet.PCS
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                            -
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                            }
+
+
+                                                            <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalpcs" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().STARTPCS)" />
+                                                                <input style="border: none !important;" onblur="CalcTotalTableResa()" class="span12 m-wrap" group="@list.First().MERGESELECTIONID" name="ENDPCS" type="number" value="@(listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDPCS > 0).Count() == 0 ? 0 : listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDPCS > 0).First().ENDPCS)" />
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                if (data == eleFilter[ele])
+                                                                {
+                                                                    <td style="background-color: #e6eef1;font-weight: bold;" name="selectionresultpcs">
+                                                                        @(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().STARTPCS)
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                                }
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                    case "KGS":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                            <td rowspan="@(rowdetail.Where(x => x != null).Count() * eleFilter.Count)">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="LISTSTARTID" value="@(string.Join(";", listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).Select(x => x.IDSTARTRESA)))" />
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="MERGESELECTIONID" value="@list.First().MERGESELECTIONID" />
+
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="SELECTIONID" value="@list.First().SELECTIONID" />
+
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="SUBSELECTIONID" value="@list.First().SUBSELECTIONID" />
+                                                                @list.First().SELECTIONFULL
+                                                            </td>
+                                                            <td style="background-color:#bac2c5;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTNW" value="@list.First().STARTNW" />
+                                                                @list.First().STARTNW
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                <td style="background-color: #bac2c5;font-weight: bold;">
+                                                                    -
+                                                                </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;font-weight: bold;">
+                                                                            <input type="hidden" name="NW" group="@list.First().MERGESELECTIONID" value="@pallet.NW" />
+                                                                            @pallet.NW
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;font-weight: bold;">
+                                                                            <input type="hidden" name="NW" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                            }
+
+                                                            <td style="background-color:#bac2c5;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalnw" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().STARTNW)" />
+                                                                <input style="border: none !important;" onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDNW" group="@list.First().MERGESELECTIONID" type="number" value="@(listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDNW > 0).Count() == 0 ? 0 : listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDNW > 0).First().ENDNW)" />
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                if (data == eleFilter[ele])
+                                                                {
+                                                                    <td style="background-color:#bac2c5;font-weight: bold;" name="selectionresultnw">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().STARTNW)</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td style="background-color:#bac2c5;font-weight: bold;"></td>
+                                                                }
+                                                            }
+
+                                                        </tr>
+                                                        break;
+                                                    case "SQFT":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                            <td rowspan="@(rowdetail.Where(x => x != null).Count() * eleFilter.Count)">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="LISTSTARTID" value="@(string.Join(";", listProduction.Where(x=>x.SELECTIONFULL == list.First().SELECTIONFULL).Select(x=>x.IDSTARTRESA)))" />
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="MERGESELECTIONID" value="@list.First().MERGESELECTIONID" />
+
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="SELECTIONID" value="@list.First().SELECTIONID" />
+
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="SUBSELECTIONID" value="@list.First().SUBSELECTIONID" />
+                                                                @list.First().SELECTIONFULL
+                                                            </td>
+                                                            <td style="background-color: #83a0a5;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTSQFT" value="@list.First().STARTSQFT" />
+                                                                @list.First().STARTSQFT
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                <td style="background-color: #83a0a5;font-weight: bold;">
+                                                                    -
+                                                                </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;font-weight: bold;">
+                                                                            <input type="hidden" name="SQFT" group="@list.First().MERGESELECTIONID" value="@pallet.SQFT" />
+                                                                            @pallet.SQFT
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;font-weight: bold;">
+                                                                            <input type="hidden" name="SQFT" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                            }
+
+                                                            <td style="background-color: #83a0a5;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalsqft" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().STARTSQFT)" />
+                                                                <input style="border: none !important;" onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDSQFT" group="@list.First().MERGESELECTIONID" type="number" value="@(listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDSQFT > 0).Count() == 0 ? 0 : listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDSQFT > 0).First().ENDSQFT)" />
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                if (data == eleFilter[ele])
+                                                                {
+                                                                    <td style="background-color: #83a0a5;font-weight: bold;" name="selectionresultsqft">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().STARTSQFT)</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td style="background-color: #83a0a5;font-weight: bold;"></td>
+                                                                }
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                }
+
+                                                break;
+                                            default:
+                                                switch (eleFilter[ele])
+                                                {
+                                                    case "PCS":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+
+
+                                                            <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTPCS" value="@list.First().STARTPCS" />
+                                                                @list.First().STARTPCS
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                    -
+                                                                </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                            <input type="hidden" name="PCS" group="@list.First().MERGESELECTIONID" value="@pallet.PCS" />
+                                                                            @pallet.PCS
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                            <input type="hidden" name="PCS" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                            }
+
+                                                            <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalpcs" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().STARTPCS)" />
+                                                                <input style="border: none !important;" onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDNW" group="@list.First().MERGESELECTIONID" type="number" value="@(listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDNW > 0).Count() == 0 ? 0 : listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDNW > 0).First().ENDNW)" />
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                if (data == eleFilter[ele])
+                                                                {
+                                                                    <td style="background-color: #e6eef1;font-weight: bold;" name="selectionresultpcs">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().STARTPCS)</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                                }
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                    case "KGS":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+
+
+                                                            <td style="background-color:#bac2c5;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTNW" value="@list.First().STARTNW" />
+                                                                @list.First().STARTNW
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                <td style="background-color: #bac2c5;">
+                                                                    -
+                                                                </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;">
+                                                                            <input type="hidden" name="NW" group="@list.First().MERGESELECTIONID" value="@pallet.NW" />
+                                                                            @pallet.NW
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;">
+                                                                            <input type="hidden" name="NW" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                        }
+                                                                }
+                                                            }
+
+                                                            <td style="background-color:#bac2c5;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalnw" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().STARTNW)" />
+                                                                <input style="border: none !important;" onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDNW" group="@list.First().MERGESELECTIONID" type="number" value="@(listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDNW > 0).Count() == 0 ? 0 : listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDNW > 0).First().ENDNW)" />
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                if (data == eleFilter[ele])
+                                                                {
+                                                                    <td style="background-color:#bac2c5;font-weight: bold;" name="selectionresultnw">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().STARTNW)</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td style="background-color:#bac2c5;font-weight: bold;"></td>
+                                                                }
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                    case "SQFT":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                            <td style="background-color: #83a0a5;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTSQFT" value="@list.First().STARTSQFT" />
+                                                                @list.First().STARTSQFT
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                    <td style="background-color: #83a0a5;">
+                                                                        -
+                                                                    </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;">
+                                                                            <input type="hidden" name="SQFT" group="@list.First().MERGESELECTIONID" value="@pallet.SQFT" />
+                                                                            @pallet.SQFT
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;">
+                                                                            <input type="hidden" name="SQFT" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            <td style="background-color: #83a0a5;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalsqft" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().STARTSQFT)" />
+                                                                <input style="border: none !important;" onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDSQFT" group="@list.First().MERGESELECTIONID" type="number" value="@(listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDSQFT > 0).Count() == 0 ? 0 : listProduction.Where(x=>x.MERGESELECTIONID == list.First().MERGESELECTIONID).Where(x => x.ENDSQFT > 0).First().ENDSQFT)" />
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                if (data == eleFilter[ele])
+                                                                {
+                                                                    <td style="background-color: #83a0a5;font-weight: bold;" name="selectionresultsqft">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().STARTSQFT)</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td style="background-color: #83a0a5;font-weight: bold;"></td>
+                                                                }
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    for (int ele = 0; ele < eleFilter.Count; ele++)
+                                    {
+                                        switch (ele)
+                                        {
+                                            case 0:
+                                                switch (eleFilter[ele])
+                                                {
+                                                    case "PCS":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+
+                                                            <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTPCS" value="@list.First().STARTPCS" />
+                                                                @list.First().STARTPCS
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                    <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                        -
+                                                                    </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                            <input type="hidden" name="PCS" group="@list.First().MERGESELECTIONID" value="@pallet.PCS" />
+                                                                            @pallet.PCS
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                            <input type="hidden" name="PCS" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalpcs" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().STARTPCS)" />
+                                                                @*<input onblur="CalcTotalTableResa()" class="span12 m-wrap" group="@list.First().MERGESELECTIONID" name="ENDPCS" type="number" value="@list.First().ENDPCS" />*@
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                                @*if (data == eleFilter[ele])
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;" name="selectionresultpcs">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().STARTPCS)</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                                    }*@
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                    case "KGS":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                            <td style="background-color:#bac2c5;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTNW" value="@list.First().STARTNW" />
+                                                                @list.First().STARTNW
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                    <td style="background-color:#bac2c5;font-weight: bold;">
+                                                                        -
+                                                                    </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;font-weight: bold;">
+                                                                            <input type="hidden" name="NW" group="@list.First().MERGESELECTIONID" value="@pallet.NW" />
+                                                                            @pallet.NW
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;font-weight: bold;">
+                                                                            <input type="hidden" name="NW" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                            }
+
+
+                                                            <td style="background-color:#bac2c5;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalnw" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().STARTNW)" />
+                                                                @*<input onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDNW" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDNW" />*@
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                <td style="background-color:#bac2c5;font-weight: bold;"></td>
+                                                                @*if (data == eleFilter[ele])
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;font-weight: bold;" name="selectionresultnw">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().STARTNW)</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;font-weight: bold;"></td>
+                                                                    }*@
+                                                            }
+
+                                                        </tr>
+                                                        break;
+                                                    case "SQFT":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                            <td style="background-color: #83a0a5;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTSQFT" value="@list.First().STARTSQFT" />
+                                                                @list.First().STARTSQFT
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                    <td style="background-color:#83a0a5;font-weight: bold;">
+                                                                        -
+                                                                    </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;font-weight: bold;">
+                                                                            <input type="hidden" name="SQFT" group="@list.First().MERGESELECTIONID" value="@pallet.SQFT" />
+                                                                            @pallet.SQFT
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;font-weight: bold;">
+                                                                            <input type="hidden" name="SQFT" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                            }
+
+
+                                                            <td style="background-color: #83a0a5;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalsqft" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().STARTSQFT)" />
+                                                                @*<input onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDSQFT" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDSQFT" />*@
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                <td style="background-color: #83a0a5;font-weight: bold;"></td>
+                                                                @*if (data == eleFilter[ele])
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;font-weight: bold;" name="selectionresultsqft">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().STARTSQFT)</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;font-weight: bold;"></td>
+                                                                    }*@
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                }
+
+                                                break;
+                                            default:
+                                                switch (eleFilter[ele])
+                                                {
+                                                    case "PCS":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+
+
+                                                            <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTPCS" value="@list.First().STARTPCS" />
+                                                                @list.First().STARTPCS
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                    <td style="background-color:#e6eef1;font-weight: bold;">
+                                                                        -
+                                                                    </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                            <input type="hidden" name="PCS" group="@list.First().MERGESELECTIONID" value="@pallet.PCS" />
+                                                                            @pallet.PCS
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                            <input type="hidden" name="PCS" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                            }
+
+
+                                                            <td style="background-color: #e6eef1;font-weight: bold;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalpcs" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().STARTPCS)" />
+                                                                @*<input onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDNW" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDPCS" />*@
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                                @*if (data == eleFilter[ele])
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;" name="selectionresultpcs">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().PCS) + list.First().ENDPCS - list.First().STARTPCS)</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="background-color: #e6eef1;font-weight: bold;"></td>
+                                                                    }*@
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                    case "KGS":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+
+
+                                                            <td style="background-color:#bac2c5;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTNW" value="@list.First().STARTNW" />
+                                                                @list.First().STARTNW
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                    <td style="background-color:#bac2c5;">
+                                                                        -
+                                                                    </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;">
+                                                                            <input type="hidden" name="NW" group="@list.First().MERGESELECTIONID" value="@pallet.NW" />
+                                                                            @pallet.NW
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;">
+                                                                            <input type="hidden" name="NW" group="@list.First().MERGESELECTIONID" value="0" />
+                                                                            -
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                            }
+
+
+                                                            <td style="background-color:#bac2c5;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalnw" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().STARTNW)" />
+                                                                @*<input onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDNW" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDNW" />*@
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                <td style="background-color:#bac2c5;font-weight: bold;"></td>
+                                                                @*if (data == eleFilter[ele])
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;font-weight: bold;" name="selectionresultnw">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().NW) + list.First().ENDNW - list.First().STARTNW)</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="background-color:#bac2c5;font-weight: bold;"></td>
+                                                                    }*@
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                    case "SQFT":
+                                                        <tr name="@list.First().MERGESELECTIONID" idendresa="@(list.First().IDENDRESA.HasValue ? list.First().IDENDRESA.Value.ToString() : "")" idstartresa="@(list.First().IDSTARTRESA.HasValue ? list.First().IDSTARTRESA.Value.ToString() : "")">
+                                                            <td style="background-color: #83a0a5;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="STARTSQFT" value="@list.First().STARTSQFT" />
+                                                                @list.First().STARTSQFT
+                                                            </td>
+                                                            @if (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() == 0)
+                                                            {
+                                                                for (var c = 0; c < colspan; c++)
+                                                                {
+                                                                    <td style="background-color:#83a0a5;">
+                                                                        -
+                                                                    </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var pallet in list)
+                                                                {
+                                                                    if (!string.IsNullOrEmpty(pallet.NAME))
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;">
+                                                                            <input type="hidden" name="SQFT" group="@list.First().MERGESELECTIONID" value="@pallet.SQFT" />
+                                                                            @pallet.SQFT
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                                if (colspan > list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() && list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0)
+                                                                {
+                                                                    for (var i = 0; i < (colspan - list.Where(x => string.IsNullOrEmpty(x.NAME)).Count() - (list.Where(x => !string.IsNullOrEmpty(x.NAME)).Count() > 0 ? 1 : 0)); i++)
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;">
+                                                                            -
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                            }
+
+
+                                                            <td style="background-color: #83a0a5;">
+                                                                <input type="hidden" group="@list.First().MERGESELECTIONID" name="totalsqft" value="@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().STARTSQFT)" />
+                                                                @*<input onblur="CalcTotalTableResa()" class="span12 m-wrap" name="ENDSQFT" group="@list.First().MERGESELECTIONID" type="number" value="@list.First().ENDSQFT" />*@
+                                                            </td>
+                                                            @foreach (var data in eleFilter)
+                                                            {
+                                                                <td style="background-color: #83a0a5;font-weight: bold;"></td>
+                                                                @*if (data == eleFilter[ele])
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;font-weight: bold;" name="selectionresultsqft">@(listProduction.Where(x => x.SELECTIONFULL == list.First().SELECTIONFULL).GroupBy(x => x.NAME).Sum(x => x.First().SQFT) + list.First().ENDSQFT - list.First().STARTSQFT)</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="background-color: #83a0a5;font-weight: bold;"></td>
+                                                                    }*@
+                                                            }
+                                                        </tr>
+                                                        break;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            </tbody>
+            <tfoot style="display: none;">
+                <tr name="selectionout">
+                    <td>
+                        <select name="SELECTIONFULL" class="span12">
+                            @{
+                                if (ViewBag.SelectInOne != null)
+                                {
+                                    foreach (var item in (List<ModelHelper.ViewModel.SelectionOneList>)ViewBag.SelectInOne)
+                                    {
+                                        <option value="@item.ID">@item.SELECTIONFULL</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td></td>
+                    <td colspan="@(maxPalletPerSelection)"></td>
+                    <td>
+                        <input class="span12 m-wrap" name="ENDPCS" type="number" value="0" />
+                        <input class="span12 m-wrap" name="ENDNW" type="number" value="0" />
+                        <input class="span12 m-wrap" name="ENDSQFT" type="number" value="0" />
+                    </td>
+                    <td colspan="3">
+                        <button type="button" onclick="AddResaStartExtend()" class="btn blue">Add</button>
+                        <button type="button" onclick="OutAddResaStartExtend()" class="btn blue">Cancel</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+    }
+}
+

@@ -1,0 +1,317 @@
+﻿@model ModelDatabase.MD_PALETTE
+
+@{
+    ViewBag.Title = "LamipelVN | Detail Pallet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+
+    @{
+        if (User != null && User.ISADMIN)
+        {
+            @Html.Action("MenuSiteBar", "Common")
+        }
+    }
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content @(User != null && !User.ISADMIN ? "no-margin" : "")">
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3 class="page-title">
+                        Detail Pallet
+                        <small>form components and widgets</small>
+                    </h3>
+                    <ul class="breadcrumb sitemap"></ul>
+                    @*<ul class="breadcrumb">
+                            <li>
+                                <i class="icon-home"></i>
+                                <a href="/">Home</a>
+                                <span class="icon-angle-right"></span>
+                            </li>
+                            <li>
+                                <a href="/pallet">Pallet</a>
+                                <span class="icon-angle-right"></span>
+                            </li>
+                            <li><a href="#">Detail</a></li>
+                        </ul>*@
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN SAMPLE FORM PORTLET-->
+                    <div class="portlet box blue">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-reorder"></i>Information</div>
+                            @*<div class="tools">
+                                    <a href="javascript:;" class="collapse"></a>
+                                    <a href="#portlet-config" data-toggle="modal" class="config"></a>
+                                    <a href="javascript:;" class="reload"></a>
+                                    <a href="javascript:;" class="remove"></a>
+                                </div>*@
+                        </div>
+                        <div class="portlet-body form">
+                            @*<div class="table-toolbar">
+                                    <div class="btn-group pull-right">
+                                        <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                            Tools <i class="icon-angle-down"></i>
+                                        </button>
+                                        <ul class="dropdown-menu pull-right">
+                                            <li><a onclick="SavePallet($('.form-actions').first(), 0)" href="javascript:void(0)">Print</a></li>
+                                        </ul>
+                                    </div>
+                                </div>*@
+                            <!-- BEGIN FORM-->
+                            <form id="frm" action="/ShippingmarkPrint/SavePallet" control="/pallet" method="post" class="form-horizontal">
+                                <input type="hidden" id="ID" name="ID" value="@Model.ID" />
+                                <input type="hidden" id="CREATEDUSER" name="CREATEDUSER" value="@Model.CREATEDUSER" />
+                                <input type="hidden" id="CREATEDDATE" name="CREATEDDATE" value="@Model.CREATEDDATE" />
+                                <input type="hidden" id="UPDATEDDATE" name="UPDATEDDATE" value="@Model.UPDATEDDATE" />
+                                <input type="hidden" id="UPDATEDUSER" name="UPDATEDUSER" value="@Model.UPDATEDUSER" />
+                                <input type="hidden" id="CONTAINERID" name="CONTAINERID" value="@Model.CONTAINERID" />
+                                <input type="hidden" id="BARCODE" name="BARCODE" value="@Model.BARCODE" />
+                                <div class="control-group">
+                                    <div class="controls-left-30 requirefield">
+                                        <label class="control-label">Resa / Phiếu SX:</label>
+                                        <div class="controls">
+                                            @*<span class="unit-left" style="position: absolute;line-height: 2.4em;z-index: 1;">LVN</span>*@
+                                            <select name="RESACODE" style="padding: 0 40px !important;" data-value="RESACODE" data-name="RESACODE" ajaxurl="/resa/GetListResa" afterload="ActiveChosenPallet" class="customselect span6" data-selected="@Model.RESACODE"></select>
+                                            @*<input columnName="RESACODE" suggest-link="/ShippingmarkPrint/SearchResa" autocomplete="off" id="RESACODE" name="RESACODE" type="text" class="span6 m-wrap tooltips customvalidate_js" value="@(Model.RESACODE)" data-trigger="hover" data-original-title="Input hide" style="padding: 0 40px !important;" data-notnull="true" data-null-msg="Mã Resa không được phép bỏ trống" />*@
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls-left-30 requirefield">
+                                        <label class="control-label" style="font-size: 7pt;">Make by / Người nhập:</label>
+                                        <div class="controls">
+                                            <input autocomplete="on" id="NAVIGATORNAME" name="NAVIGATORNAME" type="text" class="span6 m-wrap customvalidate_js" value="@(!string.IsNullOrEmpty(Model.NAVIGATORNAME) ? Model.NAVIGATORNAME : "")" data-notnull="true" data-null-msg="Người tạo pallet không được phép bỏ trống" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="line-split"></div>
+                                <div class="control-group">
+                                    <div class="controls-left-50">
+                                        <label class="control-label">Semi production:</label>
+                                        <div class="controls" style="padding-top: 5px;">
+                                            <input name="ISSEMIPRODUCTION" type="checkbox" @(Model.ISSEMIPRODUCTION ? "checked" : "") />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="line-split"></div>
+                                <div class="control-group">
+                                    <div class="controls-left-30 requirefield">
+                                        <label class="control-label">Selection:</label>
+                                        <div class="controls">
+                                            <select id="SELECTION" name="SELECTION" data-value="NAME" data-name="NAME" ajaxurl="/selection/getlist" afterload="LoadSubSelEdit" onchange="LoadSubSel()" class="customselect span6" data-selected="@Model.SELECTION"></select>
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 requirefield">
+                                        <label class="control-label">Layer:</label>
+                                        <div class="controls">
+                                            <input autocomplete="off" id="HIDE" name="HIDE" type="number" class="span6 m-wrap tooltips customvalidate_js unit-last" value="@(!string.IsNullOrEmpty(Model.HIDE) ? Model.HIDE : "")" data-trigger="hover" data-original-title="Input Layer" data-notnull="true" data-null-msg="Layer không được phép bỏ trống" />
+                                            @*<span class="unit-left"><small>PCS</small></span>*@
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30-reverse">
+                                        <div class="controls" style="width: 90px;">
+                                            <select id="PALLETWEIGHT" name="PALLETWEIGHT" class="span6" data-placeholder="Choose Pallet weight">
+                                                <option value="20" @(Model.PALLETWEIGHT == "20" ? "selected" : "")>20</option>
+                                                <option value="30" @(Model.PALLETWEIGHT == "30" ? "selected" : "")>30</option>
+                                                <option value="40" @(Model.PALLETWEIGHT == "40" ? "selected" : "")>40</option>
+                                            </select>
+                                        </div>
+                                        <label class="control-label">PLW</label>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls-left-30 requirefield">
+                                        <label class="control-label">Sub Selection:</label>
+                                        <div class="controls">
+                                            <select data-selected="@Model.SUBSELECTION" id="SUBSELECTION" name="SUBSELECTION" class="span6" onchange="GenerateNumber()"></select>
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30 requirefield">
+                                        <label class="control-label">NW:</label>
+                                        <div class="controls">
+                                            <input autocomplete="off" id="NETWEIGHT" name="NETWEIGHT" type="number" class="span6 m-wrap tooltips customvalidate_js unit-last" value="@(string.IsNullOrEmpty(Model.NETWEIGHT) ? "" : Model.NETWEIGHT)" data-trigger="hover" data-original-title="Input net weight" data-notnull="true" data-null-msg="Trọng lượng không được phép bỏ trống" />
+                                            @*<span class="unit-left"><small>KGS</small></span>*@
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30-reverse">
+
+                                        <div class="controls" style="width: 90px;">
+                                            <input id="WAVG" name="WAVG" type="number" class="span6 m-wrap" value="@Model.WAVG" />
+                                        </div>
+                                        <label class="control-label">AVG</label>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls-left-30">
+                                        <label class="control-label"></label>
+                                        <div class="controls"></div>
+                                    </div>
+                                    <div class="controls-left-30">
+                                        <label class="control-label">GW:</label>
+                                        <div class="controls">
+                                            <input readonly id="GROSSWEIGHT" name="GROSSWEIGHT" type="number" class="span6 m-wrap unit-last" value="@(string.IsNullOrEmpty(Model.GROSSWEIGHT) ? "0" : Model.GROSSWEIGHT)" />
+                                            @*<span class="unit-left"><small>KGS</small></span>*@
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls-left-30">
+                                        <label class="control-label"></label>
+                                        <div class="controls"></div>
+                                    </div>
+                                    <div class="controls-left-30">
+                                        <label class="control-label">SQFT:</label>
+                                        <div class="controls">
+                                            <input autocomplete="off" id="SQUAREFOOT" name="SQUAREFOOT" type="number" class="span6 m-wrap unit-last" value="@(!string.IsNullOrEmpty(Model.SQUAREFOOT) ? Model.SQUAREFOOT : "")" />
+                                            @*<span class="unit-left"><small>SQFT</small></span>*@
+                                        </div>
+                                        <div class="controls">
+                                            <div class="mini-note">(*) Không bắt buộc</div>
+                                            <div class="mini-note">(**) Chỉ áp dụng đối với một số selection hàng Skin</div>
+                                        </div>
+                                    </div>
+                                    <div class="controls-left-30-reverse">
+                                        <div class="controls" style="width: 90px;">
+                                            <input id="SAVG" name="SAVG" type="number" class="span6 m-wrap" value="@Model.SAVG" />
+                                        </div>
+                                        <label class="control-label">S.AVG</label>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls-left-30">
+                                        <label class="control-label">Pallet No:</label>
+                                        <div class="controls">
+                                            <input style="float:left; font-weight: bold; font-size: 22px; width: 100% !important;" readonly id="NAME" name="NAME" type="text" class="span6 m-wrap unit-last" value="@(!string.IsNullOrEmpty(Model.NAME) ? Model.NAME : "")" />
+                                            <span onclick="GenerateNumber()" class="icon-refresh refresh-btn"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" style="width: 92px;" onclick="LoadPrint()" class="btn">Print<br />In</button>
+                                    <button type="button" onclick="SavePallet(this,1, true)" class="btn blue" style="width: 200px;">Save<br />Lưu</button>
+                                    <button type="button" style="width: 92px;" class="btn" onclick="location.href = '/pallet'">Cancel<br />Hủy</button>
+                                </div>
+                            </form>
+                            <!-- END FORM-->
+                        </div>
+                    </div>
+                    <!-- END SAMPLE FORM PORTLET-->
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE -->
+    </div>
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-fileupload/bootstrap-fileupload.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/gritter/css/jquery.gritter.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/chosen-bootstrap/chosen/chosen.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/clockface/css/clockface.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-datepicker/css/datepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-timepicker/compiled/timepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-colorpicker/css/colorpicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/bootstrap-datetimepicker/css/datetimepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/jquery-multi-select/css/multi-select-metro.css" />
+    <link href="/Content/assets/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/assets/plugins/bootstrap-switch/static/stylesheets/bootstrap-switch-metro.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/jquery-tags-input/jquery.tagsinput.css" />
+    @*<link href="~/Content/stylesheet.css" rel="stylesheet" />*@
+    <!-- END PAGE LEVEL STYLES -->
+    <style>
+        .chosen-container {
+            font-size: 20px !important;
+        }
+
+        .chosen-container-single .chosen-single span {
+            color: red !important;
+            font-weight: bold !important;
+        }
+        .chosen-container-active.chosen-with-drop .chosen-single {
+            height: 35px !important;
+            padding: 4px 0 0 8px !important;
+        }
+    </style>
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="~/Content/assets/plugins/chosen-bootstrap/chosen/chosen.jquery.js"></script>
+    <script src="~/Content/assets/plugins/uniform/jquery.uniform.js"></script>
+    <script src="~/Scripts/Common/customsuggest.js"></script>
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <script src="~/Scripts/business/pallet.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script type="text/javascript">
+        $.fn.imagesLoaded = function () {
+            var $imgs = this.find('img[src!=""]');
+            if (!$imgs.length) { return $.Deferred().resolve().promise(); }
+            var dfds = [];
+            $imgs.each(function () {
+
+                var dfd = $.Deferred();
+                dfds.push(dfd);
+                var img = new Image();
+                img.onload = function () { dfd.resolve(); }
+                img.onerror = function () { dfd.resolve(); }
+                img.src = this.src;
+
+            });
+            return $.when.apply($, dfds);
+        }
+        $(document).ready(function () {
+            $("select[name='PALLETWEIGHT']").change(function () {
+                ReCalCGrossWeight();
+            });
+            $("input[name='NETWEIGHT']").bind('blur', function () {
+                ReCalCGrossWeight();
+            });
+            $("input[name='NETWEIGHT']").bind('keyup', function () {
+                ReCalCGrossWeight();
+            });
+            $("input[name='HIDE']").bind('blur', function () {
+                ReCalCGrossWeight();
+                ReCalCSAVG();
+            });
+            $("input[name='HIDE']").bind('keyup', function () {
+                ReCalCGrossWeight();
+                ReCalCSAVG();
+            });
+            $("input[name='SQUAREFOOT']").bind('blur', function () {
+                ReCalCSAVG();
+            });
+            $("input[name='SQUAREFOOT']").bind('keyup', function () {
+                ReCalCSAVG();
+            });
+            $("input[type='number']").click(function () {
+                $(this).select();
+            });
+            //$("input").change(function () {
+            //    GenerateNumber();
+            //});
+            InitSuggest($('#RESACODE'));
+            InitSuggest($('#NAVIGATORNAME'));
+            $('input[name=ISSEMIPRODUCTION]').uniform();
+        })
+    </script>
+}

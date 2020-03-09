@@ -1,0 +1,132 @@
+﻿@{
+    ViewBag.Title = "LamipelVN | Contract List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+
+    @Html.Action("MenuSiteBar", "Common")
+
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <ul class="breadcrumb sitemap"></ul>
+                    @*<ul class="breadcrumb">
+                            <li>
+                                <i class="icon-home"></i>
+                                <a href="/">Home</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">Pallet</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                        </ul>*@
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet box light-grey">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-globe"></i>Contract List</div>
+                            @*<div class="tools">
+                                    <a href="javascript:;" class="collapse"></a>
+                                    <a href="#portlet-config" data-toggle="modal" class="config"></a>
+                                    <a href="javascript:;" class="reload"></a>
+                                </div>*@
+                        </div>
+                        <div class="portlet-body tablejs">
+                            <div class="table-toolbar">
+                                <div class="btn-group">
+                                    <button id="sample_editable_1_new" url="/contract/createnew" onclick="GotoUrl(this)" class="btn green">
+                                        Create New Contract <i class="icon-plus"></i>
+                                    </button>
+                                </div>
+                                @*<div class="btn-group pull-right">
+                                        <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                            Tools <i class="icon-angle-down"></i>
+                                        </button>
+                                        <ul class="dropdown-menu pull-right">
+                                            <li><a onclick="ExportSearch()" href="javascript:void(0)">Export Excel</a></li>
+                                        </ul>
+                                    </div>*@
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="customdatatable_filter dataTables_filter" realateid="tbList">
+                                        <label style="float:left;">
+                                            Search:<input id="freetext" name="freetext" data-compare="CONTRACTCODE;CUSTOMERNAME;CONSIGNEENAME;POL;POD;DELIVERYPLACE;INCOTERM;DELIVERYMETHODNAME;PAYMENTTERM;ITEMCODE;FULLSELECTION;QUANTITYCNT;CONTAINERTYPENAME;QUANTITYKGS;QUANTITYPCS;QUANTITYSQFT;COMMISSIONPERCENT;COMMISIONINCHARGE;CONTRACTITEMDISPATCHED;PENDING;CONTRACTREADY;REMARK" type="text" class="m-wrap medium" placeholder="freetext" />
+                                        </label>
+                                        <select id="CUSTOMERNAME" name="CUSTOMERNAME" data-value="CUSTOMERNAME" data-name="CUSTOMERNAME" ajaxurl="/customer/getlist" class="customselect" data-checkisnull="false">
+                                            <option value="">--All Customer--</option>
+                                        </select>
+                                        <select id="CONSIGNEENAME" name="CONSIGNEENAME" data-value="CONSIGNEENAME" data-name="CONSIGNEENAME" ajaxurl="/consignee/getlist" class="customselect" data-checkisnull="false">
+                                            <option value="">--All Consignee--</option>
+                                        </select>
+                                        <select id="ISDONE" name="ISDONE" class="span6" data-checkisnull="false">
+                                            <option value="">--All status--</option>
+                                            <option selected value="0">Processing</option>
+                                            <option value="1">Done</option>
+                                        </select>
+                                        <input type="button" class="btn btn-search btn-success" value="Search" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-fluid row-fluid-auto">
+                                @*<table actioncolwidth="170" formatsubstr=";;;;;;;;;;;;;;;;;;;;;;" colwidth="20;62;100;100;88;88;10;90;100;60;100;5;;;;;;60;;;;;" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" control="contract" idCol="CONTRACTID" urlquery="/contract/getlist" class='table table-striped table-bordered table-hover customdatatable' headerCol="Contract,Contract date,Buyer,Consignee,POD,DOD,Term,Method,Payment,Item Code,Selection,Oder Cnts,Type,Weight,Pcs,SQFT,%,Attn,Shipped,Remain,Ready,Plan,Remark" id='tbList' arrCol="CONTRACTCODE,CONTRACTDATE,CUSTOMERNAME,CONSIGNEENAME,POD,DELIVERYPLACE,INCOTERM,DELIVERYMETHODNAME,PAYMENTTERM,ITEMCODE,FULLSELECTION,QUANTITYCNT,CONTAINERTYPENAME,QUANTITYKGS,QUANTITYPCS,QUANTITYSQFT,COMMISSIONPERCENT,COMMISIONINCHARGE,CONTRACTITEMDISPATCHED,PENDING,CONTRACTREADY,DELIVERYPLAN,REMARK" exportCol="CONTRACTCODE,CONTRACTDATE,CUSTOMERNAME,CONSIGNEENAME,POL,POD,DELIVERYPLACE,INCOTERM,DELIVERYMETHODNAME,PAYMENTTERM,ITEMCODE,FULLSELECTION,QUANTITYCNT,CONTAINERTYPENAME,QUANTITYKGS,QUANTITYPCS,QUANTITYSQFT,COMMISSIONPERCENT,COMMISIONINCHARGE,CONTRACTITEMDISPATCHED,PENDING,CONTRACTREADY,DELIVERYPLAN,REMARK" definefnbtn="DoneContract" definebtn="Done Contract" iconbtn="icon-check" lstparambtn="ITEMCODE" @(User != null && User.ISADMIN ? "data-admin=true" : "")></table>*@
+
+                                <table actioncolwidth="170" formatsubstr=";;;;;;;;;;;;;;;;;;;;;;" colwidth="20;100;88;10;;60;100;5;;;;;60;;;;" ordertable="true" pageindex="@(ViewBag.PageIndex != null ? ViewBag.PageIndex : "1" )" control="contract" idCol="CONTRACTID" urlquery="/contract/getlist" class='table table-striped table-bordered table-hover customdatatable' headerCol="Contract,Consignee,POD,Term,Item Code,Selection,Oder Cnts,Weight,Pcs,SQFT,%,Attn,Shipped,Remain,Ready,Remark" id='tbList' arrCol="CONTRACTCODE,CONSIGNEENAME,POD,INCOTERM,ITEMCODE,FULLSELECTION,QUANTITYCNT,QUANTITYKGS,QUANTITYPCS,QUANTITYSQFT,COMMISSIONPERCENT,COMMISIONINCHARGE,CONTRACTITEMDISPATCHED,PENDING,CONTRACTREADY,REMARK" exportCol="CONTRACTCODE,CONSIGNEENAME,POL,POD,INCOTERM,ITEMCODE,FULLSELECTION,QUANTITYCNT,QUANTITYKGS,QUANTITYPCS,QUANTITYSQFT,COMMISSIONPERCENT,COMMISIONINCHARGE,CONTRACTITEMDISPATCHED,PENDING,CONTRACTREADY,REMARK" definefnbtn="DoneContract" definebtn="Done Contract" iconbtn="icon-check" lstparambtn="ITEMCODE" @(User != null && User.ISADMIN ? "data-admin=true" : "") replaceEdit="true"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+
+@section styles{
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Content/assets/plugins/select2/select2_metro.css" />
+    <link rel="stylesheet" href="/Content/assets/plugins/data-tables/DT_bootstrap.css" />
+    <!-- END PAGE LEVEL STYLES -->
+    <style>
+        table {
+            font-size: 9px !important;
+        }
+
+            table th {
+                font-size: 9px !important;
+            }
+    </style>
+}
+
+@section scripts{
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script type="text/javascript" src="/Content/assets/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/Content/assets/plugins/data-tables/DT_bootstrap.js"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/Content/assets/scripts/app.js"></script>
+    <script src="~/Scripts/Common/customselect.js"></script>
+    <script src="~/Scripts/Common/customtable.js"></script>
+    <script src="~/Scripts/business/contract.js"></script>
+    <script type="text/javascript">
+
+    </script>
+}

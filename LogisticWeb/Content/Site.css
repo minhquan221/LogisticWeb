@@ -1,0 +1,634 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+
+.maskBoxeContent {
+    position: fixed;
+    top: 40%;
+    left: 48%;
+    z-index: 99999999;
+}
+
+#maskBoxes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    z-index: 9999999999999;
+}
+
+#maskBoxesFake {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    z-index: 99999998;
+    background-color: lightgray;
+    opacity: 0.5;
+}
+
+.swal2-buttonswrapper button, .swal2-buttonswrapper input {
+    background-color: rgb(0, 140, 68) !important;
+    border-color: rgb(0, 140, 68) !important;
+}
+
+.swal2-icon.swal2-info, swal2-icon.swal2-confirm {
+    color: rgb(0, 140, 68) !important;
+    border-color: #00894299 !important;
+}
+
+.login {
+    background-color: white !important;
+    background: url(/Content/LamipelAlbum/1.jpg) no-repeat no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+    .login .content {
+        background-color: #fff;
+        width: 291px;
+        margin: 0 auto;
+        margin-bottom: 0px;
+        margin-bottom: 0px;
+        padding: 30px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+        padding-top: 20px;
+        padding-bottom: 15px;
+        opacity: 0.8;
+    }
+
+body {
+    background-color: white !important;
+    /*background: url(/Content/LamipelAlbum/1.jpg) no-repeat no-repeat center center fixed;*/
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.logo-str {
+    padding-left: 20px;
+    font-weight: bold;
+    color: #c50707;
+}
+
+.portlet.box.blue > .portlet-title {
+    background-color: #28b779;
+}
+
+table.table thead {
+    background-color: grey;
+    color: white;
+    font-weight: bold;
+}
+
+    table.table thead th {
+        text-align: center;
+    }
+
+.controls-left-50 {
+    float: left;
+    width: 50%;
+    min-width: 350px;
+    margin-bottom: 0px;
+}
+
+    .controls-left-50.nosize label {
+        width: auto;
+    }
+
+    .controls-left-50.nosize .controls {
+        text-align: right;
+        margin-left: 0px;
+        padding-right: 10px;
+    }
+
+.controls-left-30, .controls-left-30-reverse {
+    float: left;
+    width: 30%;
+    min-width: 350px;
+    margin-bottom: 0px;
+}
+
+    .controls-left-30 .control-label, .controls-left-30-reverse .control-label {
+        width: 30%;
+    }
+
+    .controls-left-30 .controls {
+        margin-left: 30.5%;
+    }
+
+        .controls-left-30 .controls input, .controls-left-30 .controls select, .controls-left-30 .controls textarea {
+            width: 100%;
+        }
+
+    .controls-left-30-reverse .controls {
+        margin-left: 0px;
+        width: 60%;
+        margin-right: 10px;
+        float: left;
+    }
+
+    .controls-left-30-reverse .control-label {
+        text-align: left;
+    }
+
+    .controls-left-30-reverse .controls input, .controls-left-30-reverse .controls select, .controls-left-30-reverse .controls textarea {
+        width: 100%;
+    }
+
+.unit-left {
+    line-height: 2.5em;
+    padding-left: 10px;
+}
+
+.mini-note {
+    font-size: 7pt;
+    font-style: italic;
+    /*font-weight: bold;*/
+    line-height: 1.2em;
+}
+
+.icon-play {
+    cursor: pointer;
+}
+
+    .icon-play:before {
+        cursor: pointer;
+    }
+
+.control-label.turnleft {
+    width: 100px;
+}
+
+.controls.turnleft {
+    margin-left: 115px;
+}
+
+.btn-search {
+    height: 30px;
+    line-height: 0;
+}
+
+.customdatatable_filter input[type=text] {
+    height: 16px;
+}
+
+.customdatatable_filter select {
+    margin-bottom: 0px;
+}
+
+.customdatatable_filter input, .customdatatable_filter select {
+    width: auto !important;
+}
+
+input.error {
+    border: 1px solid red;
+}
+
+.form-horizontal .control-group {
+    margin-bottom: 0px !important;
+}
+
+.palletSign {
+    min-height: 250px;
+    width: 60%;
+    position: absolute;
+}
+
+.palletUnsign {
+    min-height: 250px;
+    width: 20%;
+    border: 1px solid #b1b1b5;
+    border-radius: 15px !important;
+    float: right;
+}
+
+.table th, .table td {
+    padding: 0px 8px !important;
+    vertical-align: middle !important;
+}
+
+.form-horizontal .requirefield input, .form-horizontal .requirefield select, .form-horizontal .requirefield textarea {
+    background-color: #c8e8f7;
+}
+
+.table tbody tr {
+    cursor: pointer;
+}
+
+.btn {
+    border-radius: 5px !important;
+}
+
+/*.row-fluid.row-fluid-auto {
+    overflow: auto;
+}*/
+
+.icon-print {
+    cursor: pointer;
+}
+
+    .icon-print:before {
+        cursor: pointer;
+    }
+
+.header .navbar-inner {
+    background-color: #c3dbde !important;
+}
+
+.spanlogo {
+    line-height: 1em;
+    font-size: 18pt;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    margin-left: 5px;
+}
+
+.header .brand {
+    width: auto !important;
+}
+
+ul.page-sidebar-menu > li.active > a, .portlet.box.blue > .portlet-title, .portlet.box.light-grey > .portlet-title, table.table thead {
+    background: #c3dbde !important;
+}
+
+    ul.page-sidebar-menu > li.active > a .selected {
+        background-image: url(assets/img/sidebar-menu-arrow-gray.png) !important;
+    }
+
+ul.page-sidebar-menu > li.active > a, ul.page-sidebar-menu > li > a, table.table thead {
+    color: #0c1754 !important;
+}
+
+ul.page-sidebar-menu > li.active > a {
+    font-weight: bold;
+}
+
+.icon-home:before, .icon-suitcase:before, .icon-briefcase:before, .icon-inbox:before, .icon-inbox:before, .icon-move:before, .icon-compass:before, .icon-book:before, .icon-adn:before, .icon-edit:before, .icon-reorder:before, .portlet > .portlet-title > .caption, .icon-globe:before, .icon-trash:before {
+    color: #0c1754 !important;
+    cursor: pointer;
+}
+
+ul.page-sidebar-menu > li {
+    background: #ebedef !important;
+}
+
+.page-sidebar-menu {
+    margin-top: 75px !important;
+}
+
+.header .nav > li.dropdown.user .dropdown-toggle .username {
+    color: white !important;
+}
+
+.header .nav .dropdown-toggle:hover, .header .nav .dropdown.open .dropdown-toggle {
+    background-color: #c3dbde !important;
+}
+
+.header .nav > li.dropdown.user.open .dropdown-toggle .username {
+    color: #0c1754 !important;
+}
+
+.btn, .btn:focus, .btn:hover, .btn.blue:focus, .btn.blue:hover, .btn.green, .btn-group .btn.green:hover, .btn-group .btn.green:focus, .btn-group .btn.green:active, .btn-group .btn.green.active, .btn-group .btn.green.disabled, .btn-group .btn.green[disabled] {
+    background-color: #0c1754 !important;
+}
+
+table .icon-edit, table .icon-trash, table .icon-check, table .icon-check-empty {
+    padding: 12px;
+}
+
+.btn, .btn:focus, .btn:hover {
+    color: white;
+}
+
+input.unit-last, select.unit-last, textarea.unit-last {
+    width: 164px !important;
+}
+
+.line-split {
+    width: 100%;
+    border-top: 3px solid #0c1754;
+    margin: 10px 0;
+}
+
+/*#menusitemap {
+    position: fixed;
+}*/
+
+.loginbtn:hover, .loginbtn:focus {
+    background-color: #0c1754 !important;
+}
+
+ul.autocomplete {
+    position: absolute;
+    z-index: 999;
+    background-color: white;
+    border-radius: 15px;
+    border: 1px solid #e5e5e5;
+    padding: 0px;
+    margin: 0px;
+    width: auto;
+}
+
+    ul.autocomplete li {
+        list-style: none;
+        position: relative;
+        margin: 0;
+        padding: 3px 1em 3px .4em;
+        cursor: pointer;
+        min-height: 0;
+    }
+
+        ul.autocomplete li:hover {
+            border: 1px solid #999999;
+            font-weight: normal;
+            color: #212121;
+        }
+
+
+table thead th.asc:after {
+    content: "\25b2";
+}
+
+table thead th.desc:after {
+    content: "\25bc";
+}
+
+.portlet.box > .portlet-title > .filter-on-title, .portlet.box > .portlet-title > .action-on-title {
+    float: left;
+    min-width: 250px !important;
+    display: inline-block;
+    margin: -4px 0 0 15px;
+    height: 30px !important;
+}
+
+    .portlet.box > .portlet-title > .action-on-title .btn {
+        padding: 5px 15px;
+    }
+
+.templatespan12 {
+    float: left;
+    width: 100%;
+    margin-left: auto !important;
+}
+
+.portlet.box.blue.no-border, .form-actions.no-border {
+    border: none;
+}
+
+.form-actions.no-border {
+    background-color: unset !important;
+}
+
+.table-hover tbody tr:hover > td, .table-hover tbody tr:hover > th {
+    background-color: #c3dbde !important;
+    color: #0c1754 !important;
+}
+
+.approximateunit {
+    position: absolute;
+    line-height: 2.5em;
+}
+
+.refresh-btn {
+    position: absolute;
+    margin: 5px 0 0 5px;
+    font-size: 24px;
+}
+
+.table th, .table td {
+    line-height: 12px !important;
+}
+
+.page-content .breadcrumb {
+    margin-bottom: 0px !important;
+}
+
+.table th {
+    font-size: 11px !important;
+}
+
+.table td, .table td input, .table td select {
+    font-size: 10px !important;
+}
+
+.overflowtable {
+    overflow: auto;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+}
+
+.table th span {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.table td span {
+    cursor: pointer;
+    text-overflow: ellipsis;
+    /*white-space: nowrap;*/
+    white-space: normal;
+    overflow: hidden;
+    display: block;
+}
+
+.table th:hover {
+    cursor: col-resize;
+}
+
+.table thead span:hover {
+    cursor: pointer;
+}
+
+.table button span {
+    display: inline !important;
+    cursor: pointer;
+    text-overflow: initial !important;
+    white-space: normal !important;
+    overflow: auto !important;
+}
+
+.span12.noleft, .span6.noleft {
+    margin-left: 0px !important;
+}
+
+.row-fluid.span6 {
+    margin-left: 0px !important;
+    width: 50%;
+}
+
+table.table.topvertical td {
+    vertical-align: top !important;
+}
+
+table.table.middlevertical td {
+    vertical-align: middle !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+table.table.middlevertical input, table.table.middlevertical select, table.table.middlevertical textarea {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+table.table.importpallet td {
+    text-align: center;
+}
+
+.row-fluid.span6 {
+}
+
+table.table.importpallet button {
+    padding: 0px !important;
+}
+
+ul.page-sidebar-menu ul.sub-menu > li > a {
+    color: #0c1754 !important;
+}
+
+.controls-left-30 {
+    float: left;
+    width: 30%;
+}
+
+table td.pcsrow {
+    background-color: #e6eef1;
+    font-weight: bold;
+}
+
+table td.kgsrow {
+    background-color: #bac2c5;
+}
+
+table td.sqftrow {
+    background-color: #83a0a5;
+}
+
+.error-valid {
+    border: 1px solid red !important;
+}
+
+.spanpercent {
+    position: absolute;
+    font-weight: bold;
+    font-size: 20px;
+    margin-left: -22px;
+    margin-top: 6px;
+}
+
+.controls-left-25, .controls-left-25-reverse {
+    float: left;
+    width: 25%;
+    min-width: 350px;
+    margin-bottom: 0px;
+}
+
+    .controls-left-25 .control-label, .controls-left-25-reverse .control-label {
+        width: 25%;
+    }
+
+    .controls-left-25 .controls {
+        margin-left: 30.5%;
+    }
+
+        .controls-left-25 .controls input, .controls-left-25 .controls select, .controls-left-25 .controls textarea {
+            width: 100%;
+        }
+
+    .controls-left-25-reverse .controls {
+        margin-left: 0px;
+        width: 60%;
+        margin-right: 10px;
+        float: left;
+    }
+
+    .controls-left-25-reverse .control-label {
+        text-align: left;
+    }
+
+    .controls-left-25-reverse .controls input, .controls-left-25-reverse .controls select, .controls-left-25-reverse .controls textarea {
+        width: 100%;
+    }
+
+
+.contentconclude {
+    background-color: #3593a9 !important;
+    color: white !important;
+}
+
+    .contentconclude input {
+        background-color: #3593a9 !important;
+        border: none !important;
+        color: white !important;
+        font-weight: bold !important;
+        font-size: 17px !important;
+    }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+.form-horizontal .controls.nomargin {
+    margin-left: 0px !important;
+    text-align: center;
+}
+
+    .form-horizontal .controls.nomargin label {
+        text-align: center;
+    }
+
+.title-shortcut {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom:5px;
+}
+
+.page-content.no-margin {
+    margin-left: 0px !important;
+}
+
+.dropdown-menu.extended {
+    max-height: 300px !important;
+    overflow: auto !important;
+}
+
+.notification .unread a {
+    font-weight: bold !important;
+    background-color: #c3dbde !important;
+}

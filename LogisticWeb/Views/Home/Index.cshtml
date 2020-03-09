@@ -1,0 +1,279 @@
+﻿@{
+    ViewBag.Title = "LamipelVN | Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+<div class="page-container">
+
+    <!-- BEGIN SIDEBAR -->
+    @{
+        if (User != null && User.ISADMIN)
+        {
+            @Html.Action("MenuSiteBar", "Common")
+        }
+    }
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE -->
+    <div class="page-content @(User != null && !User.ISADMIN ? "no-margin" : "")">
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            @{
+                if (User != null && !User.ISADMIN)
+                {
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <div class="portlet box blue">
+                                <div class="portlet-title">
+                                </div>
+                                <div class="portlet-body">
+                                    <div class="row-fluid">
+                                        <div class="span3">
+                                            <div style="text-align: center;">
+                                                <a href="/container"><img src="/Content/assets/img/DONGHANG.png" style="height: 150px;" /></a>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div style="text-align: center;">
+                                                <a href="/shippingmarkPrint"><img src="/Content/assets/img/TAOPALLET.png" style="height: 150px;" /></a>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div style="text-align: center;">
+                                                <a href="/resa"><img src="/Content/assets/img/PHIEUSX.png" style="height: 150px;" /></a>
+                                            </div>
+                                        </div>
+                                        <div class="span3">
+                                            <div style="text-align: center;">
+                                                <a href="/pallet"><img src="/Content/assets/img/PALLETLIST.png" style="height: 150px;" /></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            @{
+                if (User != null && User.ISADMIN)
+                {
+                    <div id="dashboard">
+                        <div class="row-fluid">
+                            <div class="span8">
+                                <div class="portlet box blue">
+                                    <div class="portlet-title">
+                                        <div class="caption"><i class="icon-bar-chart"></i>Pallet in month</div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <div class="row-fluid">
+                                            <div class="span12">
+                                                <canvas id="canvas"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div class="portlet box blue">
+                                    <div class="portlet-title">
+                                        <div class="caption"><i class="icon-bar-chart"></i>Percent dispatched in month</div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <div class="row-fluid">
+                                            <div class="span12">
+                                                <canvas id="canvas2"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            }
+
+
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+
+@section scripts{
+    <script src="~/Scripts/Common/chart.min.js"></script>
+    <script type="text/javascript">
+        (function ($) {
+            window.chartColors = {
+                red: 'rgb(255, 99, 132)',
+                orange: 'rgb(255, 159, 64)',
+                yellow: 'rgb(255, 205, 86)',
+                green: 'rgb(75, 192, 192)',
+                blue: 'rgb(54, 162, 235)',
+                purple: 'rgb(153, 102, 255)',
+                grey: 'rgb(201, 203, 207)'
+            };
+            var ctx = document.getElementById('canvas').getContext('2d');
+            var ctx2 = document.getElementById('canvas2').getContext('2d');
+            var barChartData = {
+                labels: [],
+                datasets: []
+            };
+            var pieChartData = {
+                datasets: [],
+                labels: []
+            };
+            var myBar = new Chart(ctx, {
+                type: 'bar',
+                data: barChartData
+            });
+            var myPie = new Chart(ctx2, {
+                type: 'pie',
+                data: pieChartData
+            });
+            function GetChartPalletHome() {
+                $.ajax({
+                    url: '/pallet/GetChartHome',
+                    type: 'POST',
+                    before: function () {
+                    },
+                    success: function (res) {
+                        if (res.IsOk) {
+                            BuildCanvasChart(res.dataObj);
+                        }
+                    }
+                });
+            }
+            function GetChartContainerHome() {
+                $.ajax({
+                    url: '/container/GetChartHome',
+                    type: 'POST',
+                    before: function () {
+                    },
+                    success: function (res) {
+                        if (res.IsOk) {
+                            BuildCanvasPieChart(res.dataObj);
+                        }
+                    }
+                });
+            }
+            function BuildCanvasChart(data) {
+                myBar.destroy();
+                var aXisX = [];
+                data.forEach(element => {
+                    if (element['COUNTNUMBER'] > 0) {
+                        aXisX.push(element['FULLNAMESELECTION']);
+                    }
+                });
+                var datapointSummaryFailed = [];
+                var dataSummary = [];
+                data.forEach(element => {
+                    if (element['COUNTNUMBER'] > 0) {
+                        dataSummary.push(element['COUNTNUMBER']);
+                    }
+                });
+                var color = Chart.helpers.color;
+                barChartData = {
+                    labels: aXisX,
+                    datasets:
+                        [
+                            //{
+                            //    label: 'Failed Trans',
+                            //    backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+                            //    borderColor: window.chartColors.red,
+                            //    borderWidth: 1,
+                            //    data: datapointSummaryFailed
+                            //},
+                            {
+                                label: 'Count Pallet',
+                                backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+                                borderColor: window.chartColors.blue,
+                                borderWidth: 1,
+                                data: dataSummary
+                            }
+                        ]
+                    ,
+
+                };
+
+                myBar = new Chart(ctx, {
+                    type: 'bar',
+                    data: barChartData,
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Pallet print in Month',
+                            fontSize: 25
+                        },
+                        scales: {
+                            yAxes: [{
+                                display: true,
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+            function BuildCanvasPieChart(data) {
+                myPie.destroy();
+                var Dispatched = 0;
+                var Ontheline = 0;
+                var ReadytoShip = 0;
+                data.forEach(element => {
+                    if (element['ISDONE'] == '1' && element['SHIPPINGDATE'] != null) {
+                        Dispatched++;
+                    }
+                    else if (element['ISDONE'] == '1' && element['SHIPPINGDATE'] == null) {
+                        ReadytoShip++;
+                    }
+                    else if (element['ISDONE'] != '1') {
+                        Ontheline++;
+                    }
+                });
+                pieChartData = {
+                    datasets: [{
+                        data: [
+                            Dispatched,
+                            Ontheline,
+                            ReadytoShip
+                        ],
+                        backgroundColor: [
+                            window.chartColors.blue,
+                            window.chartColors.red,
+                            window.chartColors.yellow
+                        ],
+                        label: 'Container Dispatch in Month'
+                    }],
+                    labels: [
+                        'Dispatched',
+                        'On the line',
+                        'Ready to Ship'
+                    ]
+                };
+
+                myPie = new Chart(ctx2, {
+                    type: 'pie',
+                    data: pieChartData,
+                    options: {
+                        responsive: true
+                    }
+                });
+            }
+            GetChartPalletHome();
+            GetChartContainerHome();
+        }(jQuery));
+    </script>
+}

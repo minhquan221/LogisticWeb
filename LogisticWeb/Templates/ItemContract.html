@@ -1,0 +1,105 @@
+﻿<div name="item" variableid="{0}" class="row-fluid">
+    <input name="ITEMLISTID" type="hidden" value="" />
+    <input name="ITEMCODE" type="hidden" value="{0}" />
+    <div class="templatespan12">
+        <div class="portlet box blue">
+            <div class="portlet-title">
+                <div class="caption"><i class="icon-reorder"></i>{0}</div>
+                <div class="tools">
+                    <a href="javascript:;" class="collapse"></a>
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <!-- BEGIN FORM-->
+                <div class="form-horizontal">
+                    <div class="control-group">
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Customs Code:</label>
+                            <div class="controls">
+                                <input name="HAIQUANID" autocomplete="off" type="text" class="span6 m-wrap" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Selection:</label>
+                            <div class="controls">
+                                <select onclick="BeginLoadDataSelection(this)" name="SELECTIONID" class="span6"></select>
+                            </div>
+                        </div>
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Sub Selection:</label>
+                            <div class="controls">
+                                <select name="SUBSELECTIONID" class="span6"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Quantity CNT:</label>
+                            <div class="controls">
+                                <input name="QUANTITYCNT" autocomplete="off" type="number" class="span6 m-wrap" />
+                            </div>
+                        </div>
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Quantity PCS:</label>
+                            <div class="controls">
+                                <input onkeyup="RecallApproximate(this)" name="QUANTITYPCS" autocomplete="off" type="number" class="span6 m-wrap" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Quantity KGS:</label>
+                            <div class="controls">
+                                <input onkeyup="RecallApproximate(this)" name="QUANTITYKGS" autocomplete="off" type="number" class="span6 m-wrap" />
+                            </div>
+                        </div>
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Quantity SQFT:</label>
+                            <div class="controls">
+                                <input onkeyup="RecallApproximate(this)" name="QUANTITYSQFT" autocomplete="off" type="number" class="span6 m-wrap" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Price:</label>
+                            <div class="controls">
+                                <input onkeyup="RecallApproximate(this)" name="PRICE" autocomplete="off" type="number" class="span6 m-wrap" />
+                            </div>
+                        </div>
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Over:</label>
+                            <div class="controls">
+                                <input type="hidden" name="OVERUNIT" />
+                                <label class="radio">
+                                    <input onclick="RecallApproximate(this)" id="kgs_{0}" type="radio" name="over_{0}" value="kgs" />
+                                    KGS
+                                </label>
+                                <label class="radio">
+                                    <input onclick="RecallApproximate(this)" id="sqft_{0}" type="radio" name="over_{0}" value="sqft" />
+                                    SQFT
+                                </label>
+                                <label class="radio">
+                                    <input onclick="RecallApproximate(this)" id="pcs_{0}" type="radio" name="over_{0}" value="pcs" />
+                                    PCS
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls-left-50 nosize">
+                            <label class="control-label">Approximate:</label>
+                            <div class="controls">
+                                <input readonly name="Approximate" autocomplete="off" type="text" class="span6 m-wrap" />
+                                <span class="approximateunit" name="approximateunit"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END FORM-->
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,320 @@
+﻿@{
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+
+<div id="menusitemap" class="page-sidebar nav-collapse collapse">
+    <!-- BEGIN SIDEBAR MENU -->
+    <ul class="page-sidebar-menu">
+        @*<li>
+            <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+            <div class="sidebar-toggler hidden-phone">
+            </div>
+            <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+        </li>*@
+        <li data-url="">
+            <a href="/">
+                <i class="icon-home"></i>
+                <span class="title">HOME PAGE</span>
+                <span class="selected"></span>
+            </a>
+        </li>
+        @{
+            if (User.ISADMIN)
+            {
+                <li data-url="importcon">
+                    <a href="javascript:void(0)">
+                        <i class="icon-briefcase"></i>
+                        <span class="title">IMPORT</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu" style="display: none;">
+                        <li>
+                            <a href="/importcon">
+                                IMPORT CONTRACT
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/importfile">
+                                IMPORT FILE
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/supplier">
+                                SUPPLIER INFO
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/shipper">
+                                SHIPPER INFO
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            }
+        }
+        <li data-url="importcon">
+            <a href="javascript:void(0)">
+                <i class="icon-briefcase"></i>
+                <span class="title">PRODUCTION</span>
+                <span class="arrow"></span>
+            </a>
+            <ul class="sub-menu" style="display: none;">
+
+                <li>
+                    <a href="/resa">
+                        RESA LIST
+                    </a>
+                </li>
+                <li>
+                    <a href="/pallet">
+                        OUTPUT PALLET LIST
+                    </a>
+                </li>
+
+            </ul>
+        </li>
+
+        @{
+            if (User.USERNAME != "admin")
+            {
+                <li data-url="importpkl">
+                    <a href="/importpkl">
+                        <i class="icon-briefcase"></i>
+                        <span class="title">BEGIN WAREHOUSING</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+            }
+        }
+
+        <li data-url="shippingmarkprint">
+            <a href="/shippingmarkPrint">
+                <i class="icon-briefcase"></i>
+                <span class="title">SHIPPING LABEL</span>
+                <span class="selected"></span>
+            </a>
+        </li>
+        <li data-url="container">
+            <a href="/container">
+                <i class="icon-suitcase"></i>
+                <span class="title">PROD.PKL</span>
+                <span class="selected"></span>
+            </a>
+        </li>
+        @{
+            if (User.ISADMIN)
+            {
+                <li data-url="contract">
+                    <a href="javascript:void(0)">
+                        <i class="icon-briefcase"></i>
+                        <span class="title">EXPORT</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu" style="display: none;">
+                        <li>
+                            <a href="/contract">
+                                EXPORT CONTRACT
+                            </a>
+                        </li>
+                        @*<li>
+                            <a href="/customer">
+                                CLIENT LIST
+                            </a>
+                        </li>*@
+                        @*<li>
+                            <a href="/consignee">
+                                CONSIGNEE LIST
+                            </a>
+                        </li>*@
+                    </ul>
+                </li>
+            }
+        }
+        @{
+            if (User.ISADMIN)
+            {
+                <li data-url="report">
+                    <a href="javascript:void(0)">
+                        <i class="icon-briefcase"></i>
+                        <span class="title">MASTER REPORT</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu" style="display: none;">
+                        <li>
+                            <a href="/importfile/report">
+                                INCOMING REPORT
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/report/rmstock">
+                                RM STOCK
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/report/semifgstock">
+                                SEMI-FG STOCK
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/report/fginprogress">
+                                UNCOMPLETE PALLET
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/report/fgstock">
+                                FG STOCK
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/report/paymentreport">
+                                PAYMENT REPORT
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            }
+        }
+
+
+
+
+        @*<li data-url="supplier">
+            <a href="/supplier">
+                <i class="icon-compass"></i>
+                <span class="title">Supplier</span>
+                <span class="selected"></span>
+            </a>
+        </li>*@
+        @{
+            if (User.ISADMIN)
+            {
+                <li data-url="importcon">
+                    <a href="javascript:void(0)">
+                        <i class="icon-briefcase"></i>
+                        <span class="title">MASTER DATA</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu" style="display: none;">
+                        <li>
+                            <a href="/configproduct">
+                                SELECTION CONFIGURATION
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/selection">
+                                OUT-SELECTION
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/subsel">
+                                OUT-SUB SELECTION
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/material">
+                                IN-MATERIAL
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/submat">
+                                IN-SUB MATERIAL
+                            </a>
+                        </li>
+                        @*<li>
+                            <a href="/unit">
+                                UNIT
+                            </a>
+                        </li>*@
+                    </ul>
+                </li>
+            }
+        }
+
+
+        @*@{
+            if (User != null)
+            {
+                if (User.ISADMIN)
+                {
+                    <li data-url="pallet">
+                        <a href="/pallet">
+                            <i class="icon-inbox"></i>
+                            <span class="title">Pallet</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    <li data-url="selection">
+                        <a href="/selection">
+                            <i class="icon-move"></i>
+                            <span class="title">Selection</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    <li data-url="subsel">
+                        <a href="/subsel">
+                            <i class="icon-compass"></i>
+                            <span class="title">Sub Selection</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    <li data-url="material">
+                        <a href="/material">
+                            <i class="icon-move"></i>
+                            <span class="title">Material</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    <li data-url="submat">
+                        <a href="/submat">
+                            <i class="icon-compass"></i>
+                            <span class="title">Sub Material</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    <li data-url="unit">
+                        <a href="/unit">
+                            <i class="icon-book"></i>
+                            <span class="title">Unit</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                }
+            }
+        }*@
+        @*<li data-url="importcon">
+            <a href="javascript:void(0)">
+                <i class="icon-briefcase"></i>
+                <span class="title">Utility</span>
+                <span class="arrow"></span>
+            </a>
+            <ul class="sub-menu" style="display: none;">
+                <li>
+                    <a href="/addin/converttoqr">
+                        Convert to QR
+                    </a>
+                </li>
+                <li>
+                    <a href="/scanbarcode">
+                        Scan barcode
+                    </a>
+                </li>
+
+            </ul>
+        </li>*@
+
+        @*<li data-url="addin">
+            <a href="/addin/converttoqr">
+                <i class="icon-adn"></i>
+                <span class="title">Convert to QR</span>
+                <span class="selected"></span>
+            </a>
+        </li>
+        <li data-url="scanbarcode">
+            <a href="/scanbarcode">
+                <i class="icon-edit"></i>
+                <span class="title">Scan barcode</span>
+                <span class="selected"></span>
+            </a>
+        </li>*@
+    </ul>
+</div>

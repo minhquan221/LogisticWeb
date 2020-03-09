@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "LamipelVN | Register Account";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+
+<!-- BEGIN LOGIN -->
+<div class="content">
+    <!-- BEGIN LOGIN FORM -->
+    <div class="form" id="registerfrm" action="/account/register" method="POST">
+        <h3 class="form-title">Register to your account</h3>
+        <div class="alert alert-error hide">
+            <button class="close" data-dismiss="alert"></button>
+            <span></span>
+        </div>
+        <div class="control-group">
+            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+            <label class="control-label visible-ie8 visible-ie9">UserName</label>
+            <div class="controls">
+                <div class="input-icon left">
+                    <i class="icon-user"></i>
+                    <input type="text" name="UserName" class="m-wrap placeholder-no-fix" placeholder="Enter UserName" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label visible-ie8 visible-ie9">Password</label>
+            <div class="controls">
+                <div class="input-icon left">
+                    <i class="icon-lock"></i>
+                    <input type="password" name="Password" class="m-wrap placeholder-no-fix" placeholder="Enter password" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label visible-ie8 visible-ie9">Confirm Password</label>
+            <div class="controls">
+                <div class="input-icon left">
+                    <i class="icon-lock"></i>
+                    <input type="password" name="ConfirmPassword" class="m-wrap placeholder-no-fix" placeholder="Enter Confirm password" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label visible-ie8 visible-ie9">Admin User</label>
+            <div class="controls">
+                <div class="input-icon left">
+                    Admin <input type="checkbox" name="ISADMIN" value="true" />
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label visible-ie8 visible-ie9">User Type</label>
+            <div class="controls">
+                <div class="input-icon left">
+                    <select name="USERTYPE" class="form-control m-wrap">
+                        <option value="SELECT">User Select</option>
+                        <option value="TRIM">User Trim</option>
+                        <option value="SHOULDER">User Shoulder</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label visible-ie8 visible-ie9">Name Type</label>
+            <div class="controls">
+                <div class="input-icon left">
+                    <i class="icon-apple"></i>
+                    <input type="text" name="NAMETYPE" class="m-wrap placeholder-no-fix" placeholder="Enter UserName" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button id="btnregister" data-frm="registerfrm" type="button" class="registerbtn btn green pull-right">
+                Register <i class="m-icon-swapright m-icon-white"></i>
+            </button>
+        </div>
+    </div>
+    <!-- END LOGIN FORM -->
+</div>
+<!-- END LOGIN -->
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input[name=UserName], input[name=Password], input[name=ConfirmPassword], select[name=USERTYPE], input[name=NAMETYPE]').on('keydown', function (e) {
+                var code = (e.keyCode ? e.keyCode : e.which);
+                if (code == 13) { //Enter keycode
+                    Register($('#btnregister'));
+                }
+            })
+        });
+    </script>
+}

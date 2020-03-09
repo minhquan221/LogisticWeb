@@ -1,0 +1,28 @@
+﻿@{
+    var User = LogisticWeb.Common.LoginUser.Current;
+}
+<li class="dropdown user">
+    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+        <img alt="" src="/Content/assets/img/avatar_small_blue.png" />
+        <span class="username">@(User != null ? User.USERNAME : "")</span>
+        <i class="icon-angle-down"></i>
+    </a>
+    <ul class="dropdown-menu">
+        @*<li><a href="/account/myprofile"><i class="icon-user"></i> My Profile</a></li>
+        <li><a href="/account/mycalendar"><i class="icon-calendar"></i> My Calendar</a></li>
+        <li><a href="/mail/inbox"><i class="icon-envelope"></i> My Inbox <span class="badge badge-important">3</span></a></li>
+        <li><a href="/task"><i class="icon-tasks"></i> My Tasks <span class="badge badge-success">8</span></a></li>
+        <li class="divider"></li>
+        <li><a href="javascript:;" id="trigger_fullscreen"><i class="icon-move"></i> Full Screen</a></li>
+        <li><a href="extra_lock.html"><i class="icon-lock"></i> Lock Screen</a></li>*@
+        @{
+            if (User.USERNAME.ToLower() == "admin1")
+            {
+                <li><a href="/account/changepassword"><i class="icon-eject"></i> Change password</a></li>
+                <li><a href="/account/register"><i class="icon-eject"></i> Create new User</a></li>
+                <li><a href="/report/reportstock"><i class="icon-eject"></i> Export In Out Production</a></li>
+            }
+        }
+        <li><a href="javascript:void(0)" onclick="LogOut()"><i class="icon-key"></i> Log Out</a></li>
+    </ul>
+</li>
